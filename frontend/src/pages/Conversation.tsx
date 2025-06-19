@@ -76,10 +76,19 @@ const Conversation = () => {
 
   const userId = Number(localStorage.getItem("userId"));
 
+  // Récupérer la liste des participants à partir des messages (si possible)
+  const participants = Array.from(
+    new Set(messages.map((msg) => msg.user?.email).filter(Boolean))
+  );
+
   return (
     <Layout>
       <div className="max-w-2xl mx-auto mt-8">
         <Card className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4">
+          {/* En-tête participants */}
+          <div className="mb-2 text-sm text-gray-700 dark:text-gray-200 font-medium">
+            Participants : {participants.join(", ")}
+          </div>
           <CardContent className="h-[60vh] overflow-y-auto flex flex-col gap-2">
             {messages.map((msg) => {
               if (msg.user && !msg.user.id && msg.userId) {

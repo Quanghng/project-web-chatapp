@@ -31,16 +31,31 @@ const ConversationsList = () => {
           {data?.getConversationsByUser.length === 0 && (
             <li className="text-gray-500">Aucune conversation pour l'instant.</li>
           )}
-          {data?.getConversationsByUser.map((conv) => (
-            <li
-              key={conv.id}
-              className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 transition"
-              onClick={() => navigate(`/conversation/${conv.id}`)}
-            >
-              <div className="font-semibold">{conv.name || `Conversation #${conv.id}`}</div>
-              <div className="text-xs text-gray-500">Participants : {conv.participants.map(p => p.user.email).join(", ")}</div>
-            </li>
-          ))}
+          {data?.getConversationsByUser.map((conv) => {
+            // Trouver l'autre participant (pour une conversation à 2)
+            const other = conv.participants.find(p => p.user.id !== userId)?.user;
+            const initials = other ? (other.firstName?.[0] || other.email[0]).toUpperCase() : '?';
+            const displayName = other ? `${other.firstName || ''} ${other.lastName || ''}`.trim() || 'Utilisateur inconnu' : conv.name || `Conversation #${conv.id}`;
+            return (
+              <li
+                key={conv.id}
+                className="flex items-center gap-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900 transition"
+                onClick={() => navigate(`/conversation/${conv.id}`)}
+              >
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 flex items-center justify-center text-xl font-bold text-blue-700 dark:text-blue-100">
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold truncate">
+                    {displayName}
+                  </div>
+                  <div className="text-xs text-gray-500 truncate">
+                    Participants : {conv.participants.map(p => p.user.email).join(", ")}
+                  </div>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </Layout>
