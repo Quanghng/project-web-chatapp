@@ -1,0 +1,7 @@
+mutation ModifyUser($inputs: ModifyUserDto!) {
+  updateUser(inputs: $inputs) {
+    id
+    firstName
+    lastName
+  }
+}

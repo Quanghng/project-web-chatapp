@@ -1,0 +1,28 @@
+query GetThreads {
+  getThreads {
+    id
+    title
+    content
+    createdAt
+    likes
+    imageUrl
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    comments {
+      id
+      content
+      createdAt
+      likes
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+  }
+}

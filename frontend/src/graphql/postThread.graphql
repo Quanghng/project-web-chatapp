@@ -1,0 +1,9 @@
+mutation PostThread($inputs: PostThreadDto!) {
+  postThread(inputs: $inputs) {
+    id
+    title
+    content
+    likes
+    imageUrl
+  }
+}

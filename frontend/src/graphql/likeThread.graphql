@@ -1,0 +1,18 @@
+mutation LikeThread($threadId: Float!) {
+  likeThread(threadId: $threadId) {
+    id
+    title
+    content
+    likes
+    user {
+      email
+    }
+    comments {
+      id
+      content
+      user {
+        email
+      }
+    }
+  }
+}

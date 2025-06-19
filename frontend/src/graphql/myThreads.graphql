@@ -1,0 +1,24 @@
+query GetUserWithThreads($id: Int!) {
+  getUser(id: $id) {
+    id
+    email
+    firstName
+    lastName
+    getThreads {
+      id
+      title
+      content
+      createdAt  
+      likes
+      imageUrl
+      comments {
+        id
+        content
+        user {
+          email
+        }
+      createdAt  
+      }
+    }
+  }
+}

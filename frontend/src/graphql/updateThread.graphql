@@ -1,0 +1,7 @@
+mutation ModifyThread($inputs: ModifyThreadDto!) {
+  modifyThread(inputs: $inputs) {
+    id
+    title
+    content
+  }
+}

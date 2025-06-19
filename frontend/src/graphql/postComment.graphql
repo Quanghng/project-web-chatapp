@@ -1,0 +1,11 @@
+mutation PostComment($inputs: PostCommentDto!) {
+  postComment(inputs: $inputs) {
+    id,
+    createdAt,
+    updatedAt,
+    content,
+    likes,
+    threadId,
+    userId
+  }
+}
