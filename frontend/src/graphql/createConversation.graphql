@@ -1,0 +1,16 @@
+mutation CreateConversation($inputs: CreateConversationDto!) {
+  createConversation(inputs: $inputs) {
+    id
+    name
+    participants {
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+    createdAt
+    updatedAt
+  }
+} 

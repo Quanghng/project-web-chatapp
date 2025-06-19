@@ -22,7 +22,15 @@ export class MessageResolver implements OnModuleInit {
         // Refetch le message complet depuis la base pour avoir les bons types
         const fullMessage = await this.messageService.getMessageById(msg.id);
         if (fullMessage) {
-          pubSub.publish('messageSent', { messageSent: fullMessage });
+          pubSub.publish('messageSent', { messageSent: {
+            ...fullMessage,
+            user: {
+              id: fullMessage.user.id,
+              email: fullMessage.user.email,
+              firstName: fullMessage.user.firstName,
+              lastName: fullMessage.user.lastName,
+            }
+          }});
         }
       }
     });

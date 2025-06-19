@@ -4,6 +4,7 @@ query GetMessagesByConversation($conversationId: Int!) {
     content
     createdAt
     user {
+      id
       email
     }
     conversationId

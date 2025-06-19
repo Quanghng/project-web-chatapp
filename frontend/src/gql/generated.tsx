@@ -243,6 +243,13 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type CreateConversationMutationVariables = Exact<{
+  inputs: CreateConversationDto;
+}>;
+
+
+export type CreateConversationMutation = { __typename?: 'Mutation', createConversation: { __typename?: 'Conversation', id: number, name?: string | null, createdAt: any, updatedAt: any, participants: Array<{ __typename?: 'ConversationParticipant', user: { __typename?: 'User', id: number, email: string, firstName?: string | null, lastName?: string | null } }> } };
+
 export type DeleteThreadMutationVariables = Exact<{
   id: Scalars['Float']['input'];
 }>;
@@ -262,7 +269,7 @@ export type GetMessagesByConversationQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesByConversationQuery = { __typename?: 'Query', getMessagesByConversation: Array<{ __typename?: 'Message', id: number, content: string, createdAt: any, conversationId: number, user: { __typename?: 'User', email: string } }> };
+export type GetMessagesByConversationQuery = { __typename?: 'Query', getMessagesByConversation: Array<{ __typename?: 'Message', id: number, content: string, createdAt: any, conversationId: number, user: { __typename?: 'User', id: number, email: string } }> };
 
 export type GetThreadByIdQueryVariables = Exact<{
   threadId: Scalars['Float']['input'];
@@ -345,6 +352,50 @@ export type ModifyUserMutationVariables = Exact<{
 export type ModifyUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: number, firstName?: string | null, lastName?: string | null } };
 
 
+export const CreateConversationDocument = gql`
+    mutation CreateConversation($inputs: CreateConversationDto!) {
+  createConversation(inputs: $inputs) {
+    id
+    name
+    participants {
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateConversationMutationFn = Apollo.MutationFunction<CreateConversationMutation, CreateConversationMutationVariables>;
+
+/**
+ * __useCreateConversationMutation__
+ *
+ * To run a mutation, you first call `useCreateConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createConversationMutation, { data, loading, error }] = useCreateConversationMutation({
+ *   variables: {
+ *      inputs: // value for 'inputs'
+ *   },
+ * });
+ */
+export function useCreateConversationMutation(baseOptions?: Apollo.MutationHookOptions<CreateConversationMutation, CreateConversationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateConversationMutation, CreateConversationMutationVariables>(CreateConversationDocument, options);
+      }
+export type CreateConversationMutationHookResult = ReturnType<typeof useCreateConversationMutation>;
+export type CreateConversationMutationResult = Apollo.MutationResult<CreateConversationMutation>;
+export type CreateConversationMutationOptions = Apollo.BaseMutationOptions<CreateConversationMutation, CreateConversationMutationVariables>;
 export const DeleteThreadDocument = gql`
     mutation DeleteThread($id: Float!) {
   deleteThread(threadId: $id) {
@@ -436,6 +487,7 @@ export const GetMessagesByConversationDocument = gql`
     content
     createdAt
     user {
+      id
       email
     }
     conversationId

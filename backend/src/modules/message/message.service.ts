@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Message, Prisma } from '@prisma/client';
+import { User } from '../user/models/user.model';
 
 @Injectable()
 export class MessageService {
   constructor(private prisma: PrismaService) {}
 
-  async sendMessage(data: Prisma.MessageCreateInput): Promise<Message> {
+  async sendMessage(data: Prisma.MessageCreateInput): Promise<Message & { user: User }> {
     const message = await this.prisma.message.create({
       data,
     });
@@ -23,7 +24,7 @@ export class MessageService {
           },
         },
       },
-    }) as unknown as Message;
+    }) as unknown as Message & { user: User };
   }
 
   async getMessagesByConversation(conversationId: number): Promise<Message[]> {
@@ -43,7 +44,7 @@ export class MessageService {
     });
   }
 
-  async getMessageById(id: number): Promise<Message | null> {
+  async getMessageById(id: number): Promise<Message & { user: User }> {
     return this.prisma.message.findUnique({
       where: { id },
       include: {
@@ -56,6 +57,6 @@ export class MessageService {
           },
         },
       },
-    }) as unknown as Message;
+    }) as unknown as Message & { user: User };
   }
 } 

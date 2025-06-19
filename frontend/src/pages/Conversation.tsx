@@ -9,6 +9,7 @@ import { useGetMessagesByConversationQuery, useSendMessageMutation, useMessageSe
 const Conversation = () => {
   const { conversationId } = useParams<{ conversationId: string }>();
   const convId = Number(conversationId);
+  const shouldSkip = !conversationId || isNaN(convId);
   const [content, setContent] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -16,6 +17,7 @@ const Conversation = () => {
   // Query: historique des messages
   const { data, loading, error, refetch } = useGetMessagesByConversationQuery({
     variables: { conversationId: convId },
+    skip: shouldSkip,
   });
 
   // Mutation: envoi de message
@@ -26,7 +28,14 @@ const Conversation = () => {
     variables: { conversationId: convId },
     onData: ({ data }) => {
       if (data.data?.messageSent) {
-        setMessages((prev) => [...prev, data.data.messageSent]);
+        const msg = data.data.messageSent;
+        if (msg.user && !msg.user.id && msg.userId) {
+          msg.user.id = msg.userId;
+        }
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === msg.id)) return prev;
+          return [...prev, msg];
+        });
         scrollToBottom();
       }
     },
@@ -59,26 +68,44 @@ const Conversation = () => {
       },
     });
     setContent("");
-    refetch();
   };
 
+  if (shouldSkip) return <p className="text-center mt-10 text-red-500">Erreur : conversationId manquant ou invalide.</p>;
   if (loading) return <p className="text-center mt-10">Chargement...</p>;
   if (error) return <p className="text-center text-red-500">Erreur : {error.message}</p>;
+
+  const userId = Number(localStorage.getItem("userId"));
 
   return (
     <Layout>
       <div className="max-w-2xl mx-auto mt-8">
         <Card className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4">
           <CardContent className="h-[60vh] overflow-y-auto flex flex-col gap-2">
-            {messages.map((msg) => (
-              <div key={msg.id} className="flex flex-col items-start mb-2">
-                <span className="text-xs text-gray-500">{msg.user?.email}</span>
-                <span className="bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 rounded-lg px-3 py-2 mt-1">
-                  {msg.content}
-                </span>
-                <span className="text-[10px] text-gray-400 mt-1">{new Date(msg.createdAt).toLocaleTimeString()}</span>
-              </div>
-            ))}
+            {messages.map((msg) => {
+              if (msg.user && !msg.user.id && msg.userId) {
+                msg.user.id = msg.userId;
+              }
+              const myEmail = localStorage.getItem("email");
+              const isMe = (msg.user?.id ?? msg.userId) === userId || msg.user?.email === myEmail;
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex flex-col mb-2 ${isMe ? 'items-end' : 'items-start'}`}
+                >
+                  <span className={`text-xs ${isMe ? 'text-blue-500' : 'text-gray-500'}`}>{msg.user?.email}</span>
+                  <span
+                    className={`rounded-lg px-3 py-2 mt-1 max-w-xs break-words '
+                      ${isMe ? 'bg-blue-500 text-white' : 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'}`}
+                    style={{ alignSelf: isMe ? 'flex-end' : 'flex-start' }}
+                  >
+                    {msg.content}
+                  </span>
+                  <span className="text-[10px] text-gray-400 mt-1">
+                    {new Date(msg.createdAt).toLocaleTimeString()}
+                  </span>
+                </div>
+              );
+            })}
             <div ref={messagesEndRef} />
           </CardContent>
           <form onSubmit={handleSend} className="flex gap-2 mt-4">
