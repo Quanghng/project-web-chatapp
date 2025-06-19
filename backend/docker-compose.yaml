@@ -1,26 +1,41 @@
 services:
   dev-db:
-    image: postgres:16.0
+    image: postgres:17.0
+    container_name: dev-db
     ports:
       - 5434:5432
     restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: graphproject
+      POSTGRES_DB: chatapp
     networks:
-      - devnextx
-
-  test-db:
-    image: postgres:16.0
+      - chatapp
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    restart: always
     ports:
-      - 5435:5432
+      - 5672:5672
+      - 15672:15672
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: graphproject
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: password
     networks:
-      - devnextx
-
+      - chatapp
+    configs:
+      - source: rabbitmq-plugins
+        target: /etc/rabbitmq/enabled_plugins
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]."  
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local
 networks:
-  devnextx:
+  chatapp:
