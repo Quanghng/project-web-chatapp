@@ -1,0 +1,11 @@
+mutation SendMessage($inputs: SendMessageDto!) {
+  sendMessage(inputs: $inputs) {
+    id
+    content
+    createdAt
+    user {
+      email
+    }
+    conversationId
+  }
+} 

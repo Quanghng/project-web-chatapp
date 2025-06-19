@@ -30,4 +30,9 @@ export class UserResolver {
   async getThreads(@Parent() user: User): Promise<Thread[]> {
     return this.threadLoader.batchThreadsByUser.load(user.id);
   }
+
+  @Query(() => [User])
+  async users(): Promise<User[]> {
+    return this.userService.findAll();
+  }
 }

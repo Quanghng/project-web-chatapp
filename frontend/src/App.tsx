@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SingleThread from "./pages/SingleThread";
 import MyThreads from "./pages/MyThread";
+import Conversation from "./pages/Conversation";
+import ConversationsList from "./pages/ConversationsList";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
 
@@ -28,6 +30,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/thread/:threadId" element={<SingleThread />} />
         <Route path="/mythreads" element={<MyThreads />} />
+        <Route path="/conversation/:conversationId" element={<Conversation />} />
+        <Route path="/conversations" element={<ConversationsList />} />
+        {/* Route pour la création de conversation à venir */}
+        {/* <Route path="/conversations/new" element={<CreateConversation />} /> */}
 
       </Routes>
       <ToastContainer

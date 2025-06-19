@@ -27,6 +27,7 @@ type Thread {
   likes: Int!
   comments: [Comment!]
   userId: Int!
+  imageUrl: String
   user: User!
 }
 
@@ -45,23 +46,68 @@ type User {
   getThreads: [Thread!]!
 }
 
+type Message {
+  id: Int!
+  content: String!
+  createdAt: DateTime!
+  userId: Int!
+  conversationId: Int!
+  user: User!
+}
+
+type ConversationParticipant {
+  id: Int!
+  userId: Int!
+  conversationId: Int!
+  joinedAt: DateTime!
+  user: User!
+}
+
+type Conversation {
+  id: Int!
+  name: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  participants: [ConversationParticipant!]!
+  messages: [Message!]!
+}
+
 type Query {
   getUser(id: Int!): User!
+  users: [User!]!
   getThreads: [Thread!]!
+  getThread(threadId: Float!): Thread!
   getComments(threadId: Float!): [Comment!]!
+  getConversations: [Conversation!]!
+  getConversation(id: Int!): Conversation
+  getConversationsByUser(userId: Int!): [Conversation!]!
+  getMessagesByConversation(conversationId: Int!): [Message!]!
 }
 
 type Mutation {
+  updateUser(inputs: ModifyUserDto!): User!
   postThread(inputs: PostThreadDto!): Thread!
   modifyThread(inputs: ModifyThreadDto!): Thread!
   deleteThread(threadId: Float!): Thread!
+  likeThread(threadId: Float!): Thread!
+  unlikeThread(threadId: Float!): Thread!
   postComment(inputs: PostCommentDto!): Comment!
+  createConversation(inputs: CreateConversationDto!): Conversation!
+  addParticipantToConversation(conversationId: Int!, userId: Int!): Conversation!
+  sendMessage(inputs: SendMessageDto!): Message!
+}
+
+input ModifyUserDto {
+  userId: Int!
+  firstName: String!
+  lastName: String!
 }
 
 input PostThreadDto {
   userId: Int!
   title: String!
   content: String!
+  imageUrl: String
 }
 
 input ModifyThreadDto {
@@ -74,4 +120,19 @@ input PostCommentDto {
   userId: Int!
   threadId: Int!
   content: String!
+}
+
+input CreateConversationDto {
+  name: String
+  participantIds: [Int!]!
+}
+
+input SendMessageDto {
+  content: String!
+  userId: Int!
+  conversationId: Int!
+}
+
+type Subscription {
+  messageSent(conversationId: Int!): Message!
 }
