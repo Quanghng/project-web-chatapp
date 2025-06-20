@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import { useGetMessagesByConversationQuery, useSendMessageMutation, useMessageSentSubscription } from "@/gql/generated";
+import { useGetMessagesByConversationQuery, useSendMessageMutation } from "@/gql/generated";
 
 const Conversation = () => {
   const { conversationId } = useParams<{ conversationId: string }>();
@@ -22,24 +22,6 @@ const Conversation = () => {
 
   // Mutation: envoi de message
   const [sendMessage] = useSendMessageMutation();
-
-  // Subscription: temps réel
-  useMessageSentSubscription({
-    variables: { conversationId: convId },
-    onData: ({ data }) => {
-      if (data.data?.messageSent) {
-        const msg = data.data.messageSent;
-        if (msg.user && !msg.user.id && msg.userId) {
-          msg.user.id = msg.userId;
-        }
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === msg.id)) return prev;
-          return [...prev, msg];
-        });
-        scrollToBottom();
-      }
-    },
-  });
 
   useEffect(() => {
     if (data?.getMessagesByConversation) {
@@ -68,6 +50,7 @@ const Conversation = () => {
       },
     });
     setContent("");
+    refetch(); // On refetch les messages après envoi
   };
 
   if (shouldSkip) return <p className="text-center mt-10 text-red-500">Erreur : conversationId manquant ou invalide.</p>;

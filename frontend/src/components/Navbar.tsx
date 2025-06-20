@@ -53,16 +53,6 @@ const Navbar = () => {
     <nav className="w-full bg-white dark:bg-gray-900 border-b shadow-sm py-3 px-6 mb-6 transition-colors">
       <div className="max-w-5xl mx-auto flex gap-6 items-center justify-between">
         <div className="flex gap-6 items-center">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 dark:text-blue-400 font-semibold"
-                : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
-            }
-          >
-            Home
-          </NavLink>
           {isLoggedIn ? (
             <>
               <NavLink
@@ -74,16 +64,6 @@ const Navbar = () => {
                 }
               >
                 Messagerie
-              </NavLink>
-              <NavLink
-                to="/mythreads"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-600 dark:text-blue-400 font-semibold"
-                    : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
-                }
-              >
-                My Threads
               </NavLink>
               <button
                 onClick={handleLogout}
