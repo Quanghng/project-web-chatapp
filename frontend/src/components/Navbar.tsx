@@ -66,6 +66,16 @@ const Navbar = () => {
           {isLoggedIn ? (
             <>
               <NavLink
+                to="/conversations"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-600 dark:text-blue-400 font-semibold"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
+                }
+              >
+                Messagerie
+              </NavLink>
+              <NavLink
                 to="/mythreads"
                 className={({ isActive }) =>
                   isActive

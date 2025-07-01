@@ -1,0 +1,11 @@
+subscription MessageSent($conversationId: Int!) {
+  messageSent(conversationId: $conversationId) {
+    id
+    content
+    createdAt
+    user {
+      email
+    }
+    conversationId
+  }
+} 

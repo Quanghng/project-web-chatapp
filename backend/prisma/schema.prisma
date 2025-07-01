@@ -25,6 +25,8 @@ model User {
 
   comments Comment[]
   threads Thread[]
+  conversationParticipants ConversationParticipant[]
+  messages Message[]
   @@map("users")
 }
 
@@ -60,4 +62,41 @@ model Comment {
   updatedAt DateTime   @updatedAt
 
   @@map("comments")
+}
+
+model Conversation {
+  id             Int                        @id @default(autoincrement())
+  name           String?
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+  participants   ConversationParticipant[]
+  messages       Message[]
+  
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  conversationId Int
+  joinedAt       DateTime     @default(now())
+
+  user           User         @relation(fields: [userId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@unique([userId, conversationId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  content        String
+  createdAt      DateTime     @default(now())
+  userId         Int
+  conversationId Int
+
+  user           User         @relation(fields: [userId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@map("messages")
 }

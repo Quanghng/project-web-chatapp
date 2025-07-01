@@ -29,7 +29,7 @@ cd backend
 Create a `.env` file in the root with the following content:
 
 ```env
-DATABASE_URL="postgresql://admin:password@localhost:5434/graphproject"
+DATABASE_URL="postgresql://admin:password@localhost:5432/graphproject"
 FRONTEND_URL=hhttp://localhost:5174
 FRONTEND_DOMAIN=localhost
 JWT_ACCESS_TOKEN_SECRET=your_jwt_secret

@@ -1,6 +1,5 @@
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from "@nestjs/graphql";
 import { UserService } from "./user.service";
-import { ThreadService } from "../thread/thread.service";
 import { User } from "./models/user.model";
 import { Thread } from "../thread/models/thread.model";
 import { ThreadLoader } from "../thread/loaders/thread.loader";
@@ -11,7 +10,6 @@ export class UserResolver {
   constructor(
     private readonly threadLoader: ThreadLoader,
     private userService: UserService,
-    private threadService: ThreadService
   ) { }
 
   @Query(() => User)
@@ -29,5 +27,10 @@ export class UserResolver {
   @ResolveField(() => [Thread])
   async getThreads(@Parent() user: User): Promise<Thread[]> {
     return this.threadLoader.batchThreadsByUser.load(user.id);
+  }
+
+  @Query(() => [User])
+  async users(): Promise<User[]> {
+    return this.userService.findAll();
   }
 }

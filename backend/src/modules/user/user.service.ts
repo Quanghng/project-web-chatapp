@@ -23,4 +23,8 @@ export class UserService {
     if (!user) throw new ForbiddenException("User not found");
     return user as User;
   }
+
+  async findAll(): Promise<User[]> {
+    return this.prismaService.user.findMany() as Promise<User[]>;
+  }
 }

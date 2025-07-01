@@ -1,0 +1,16 @@
+query GetConversationsByUser($userId: Int!) {
+  getConversationsByUser(userId: $userId) {
+    id
+    name
+    participants {
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+    createdAt
+    updatedAt
+  }
+} 
