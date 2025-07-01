@@ -3,9 +3,6 @@ node_modules
 dist
 build
 
-# Prisma generated files (if you want to regenerate in the container)
-prisma/migrations
-
 # Logs and temp files
 *.log
 npm-debug.log*
