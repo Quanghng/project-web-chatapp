@@ -15,7 +15,7 @@ const Conversation = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Query: historique des messages
-  const { data, loading, error, refetch } = useGetMessagesByConversationQuery({
+  const { data, loading, error} = useGetMessagesByConversationQuery({
     variables: { conversationId: convId },
     skip: shouldSkip,
   });
@@ -29,8 +29,8 @@ const Conversation = () => {
     onData: ({ data }) => {
       if (data.data?.messageSent) {
         const msg = data.data.messageSent;
-        if (msg.user && !msg.user.id && msg.userId) {
-          msg.user.id = msg.userId;
+        if (msg.user && !msg.user.id && msg.user.id) {
+          msg.user.id = msg.user.id;
         }
         setMessages((prev) => {
           if (prev.some((m) => m.id === msg.id)) return prev;

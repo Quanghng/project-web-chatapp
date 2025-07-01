@@ -27,7 +27,7 @@ RUN chmod +x ./start.sh ./wait-for-it.sh
 # RUN npm run build
 
 # Expose port your app runs on
-EXPOSE 3000
+EXPOSE 3333
 
-# Start the app
-CMD ["npm", "run", "start"]
+# Start the app using the custom start.sh script
+CMD ["./start.sh"]

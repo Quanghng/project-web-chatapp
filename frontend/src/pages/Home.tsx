@@ -35,8 +35,8 @@ const Home = () => {
     await toggleLikeThread(Number(threadId), liked);
   };
 
-  const handleAddComment = async (userId: string, threadId: string, content: string) => {
-    await commentThread(Number(userId), Number(threadId), content);
+  const handleAddComment = async (threadId: string, content: string) => {
+    await commentThread(Number(threadId), content);
     // Refetch the thread to include the new comment (or update local state)
     refetch();
   };

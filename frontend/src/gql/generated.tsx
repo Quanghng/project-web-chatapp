@@ -81,6 +81,7 @@ export type Mutation = {
   addParticipantToConversation: Conversation;
   createConversation: Conversation;
   deleteThread: Thread;
+  heartbeat: Scalars['Boolean']['output'];
   likeThread: Thread;
   modifyThread: Thread;
   postComment: Comment;
@@ -206,6 +207,7 @@ export type SendMessageDto = {
 export type Subscription = {
   __typename?: 'Subscription';
   messageSent: Message;
+  userOnline: Scalars['Boolean']['output'];
 };
 
 
@@ -300,7 +302,7 @@ export type MessageSentSubscriptionVariables = Exact<{
 }>;
 
 
-export type MessageSentSubscription = { __typename?: 'Subscription', messageSent: { __typename?: 'Message', id: number, content: string, createdAt: any, conversationId: number, user: { __typename?: 'User', email: string } } };
+export type MessageSentSubscription = { __typename?: 'Subscription', messageSent: { __typename?: 'Message', id: number, content: string, createdAt: any, conversationId: number, user: { __typename?: 'User', id: number, email: string } } };
 
 export type GetUserWithThreadsQueryVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -745,6 +747,7 @@ export const MessageSentDocument = gql`
     content
     createdAt
     user {
+      id
       email
     }
     conversationId

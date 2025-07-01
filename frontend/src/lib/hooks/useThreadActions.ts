@@ -38,7 +38,7 @@ export const useThreadActions = () => {
   };
 
   // Comment handler 
-  const commentThread = async (userId: number, threadId: number, content: string) => {
+  const commentThread = async (threadId: number, content: string) => {
     if (!content.trim()) {
       toast.info("Please write a comment.");
       return;

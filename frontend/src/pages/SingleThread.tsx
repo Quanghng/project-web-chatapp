@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LikeButton from "@/components/LikeButton";
@@ -31,8 +31,7 @@ const SingleThread = () => {
   // Comment handler
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    const userId = localStorage.getItem("userId");
-    await commentThread(Number(userId), Number(threadId), content);
+    await commentThread(Number(threadId), content);
     // Optionally clear the content input after posting
     setContent('');
     // Refetch the thread to include the new comment (or update local state)
