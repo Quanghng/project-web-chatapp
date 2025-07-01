@@ -70,8 +70,8 @@ const MyThreads: React.FC = () => {
   };
 
   // 8. comment handler
-  const handleAddComment = async (userId: number, threadId: number, content: string) => {
-    await commentThread(userId, threadId, content);
+  const handleAddComment = async (threadId: number, content: string) => {
+    await commentThread(threadId, content);
     // Refetch the thread to include the new comment (or update local state)
     refetch();
   };
@@ -287,8 +287,8 @@ const MyThreads: React.FC = () => {
                       content: c.content,
                       createdAt: c.createdAt,
                     }))}
-                    onAddComment={(userIdStr, threadIdStr, content) =>
-                      handleAddComment(Number(userIdStr) ,Number(threadIdStr), content)
+                    onAddComment={(threadIdStr, content) =>
+                      handleAddComment(Number(threadIdStr), content)
                     }
                   />
                 )}

@@ -4,6 +4,7 @@ subscription MessageSent($conversationId: Int!) {
     content
     createdAt
     user {
+      id
       email
     }
     conversationId
