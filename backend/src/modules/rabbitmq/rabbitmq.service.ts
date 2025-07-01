@@ -7,7 +7,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private connection: amqp.Connection;
   private channel: amqp.Channel;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private config: ConfigService) { }
 
   async onModuleInit() {
     await this.connect();
@@ -19,13 +19,13 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
   private async connect() {
     try {
-      this.connection = await amqp.connect('amqp://admin:password@localhost:5672');
+      this.connection = await amqp.connect(this.config.get<string>('RABBITMQ_URL') || '');
       this.channel = await this.connection.createChannel();
-      
+
       // Déclarer les queues
       await this.channel.assertQueue('messages', { durable: true });
       await this.channel.assertQueue('notifications', { durable: true });
-      
+
       console.log('✅ Connected to RabbitMQ');
     } catch (error) {
       console.error('❌ Failed to connect to RabbitMQ:', error);
@@ -48,7 +48,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       const result = await this.channel.sendToQueue(queue, messageBuffer, {
         persistent: true,
       });
-      
+
       console.log(`📤 Message published to queue: ${queue}`);
       return result;
     } catch (error) {
@@ -63,14 +63,14 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         if (msg) {
           const content = JSON.parse(msg.content.toString());
           console.log(`📥 Message received from queue: ${queue}`, content);
-          
+
           callback(content);
-          
+
           // Acknowledger le message
           this.channel.ack(msg);
         }
       });
-      
+
       console.log(`👂 Listening to queue: ${queue}`);
     } catch (error) {
       console.error('❌ Failed to consume messages:', error);
@@ -82,11 +82,11 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.channel.assertExchange(exchange, 'topic', { durable: true });
       const messageBuffer = Buffer.from(JSON.stringify(message));
-      
+
       await this.channel.publish(exchange, routingKey, messageBuffer, {
         persistent: true,
       });
-      
+
       console.log(`📤 Message published to exchange: ${exchange} with key: ${routingKey}`);
     } catch (error) {
       console.error('❌ Failed to publish to exchange:', error);

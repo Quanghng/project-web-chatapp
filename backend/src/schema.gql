@@ -86,6 +86,7 @@ type Query {
 
 type Mutation {
   updateUser(inputs: ModifyUserDto!): User!
+  heartbeat: Boolean!
   postThread(inputs: PostThreadDto!): Thread!
   modifyThread(inputs: ModifyThreadDto!): Thread!
   deleteThread(threadId: Float!): Thread!
@@ -134,5 +135,6 @@ input SendMessageDto {
 }
 
 type Subscription {
+  userOnline: Boolean!
   messageSent(conversationId: Int!): Message!
 }
