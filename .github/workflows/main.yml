@@ -117,7 +117,7 @@ jobs:
         # Ensure the debug logs run even if this step fails for easier troubleshooting
         if: always()
 
-      - name: Debug: Show logs of dependent services (if previous step failed)
+      - name: Debug
         if: failure() # Only run this if the previous step (Start dependent services) failed
         run: |
           echo "--- Diagnostic Information for Failed Services ---"
