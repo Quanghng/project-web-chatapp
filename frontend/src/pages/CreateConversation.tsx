@@ -36,13 +36,13 @@ const CreateConversation = () => {
         <h2 className="text-2xl font-bold mb-6">Nouvelle conversation</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 font-semibold">Nom (optionnel)</label>
+            <label className="block mb-2 font-semibold">Nom de la conversation <span className='text-red-500'>*</span></label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full p-2 border rounded bg-white dark:bg-gray-700"
-              placeholder="Nom de la conversation"
+              placeholder="Nom de la conversation (obligatoire)"
             />
           </div>
           <div>
@@ -66,7 +66,7 @@ const CreateConversation = () => {
               </div>
             )}
           </div>
-          <Button type="submit" className="w-full" disabled={creating || selected.length === 0}>
+          <Button type="submit" className="w-full" disabled={creating || selected.length === 0 || !name.trim()}>
             {creating ? "Création..." : "Créer la conversation"}
           </Button>
         </form>

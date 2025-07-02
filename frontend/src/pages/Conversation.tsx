@@ -70,7 +70,7 @@ const Conversation = () => {
     setContent("");
   };
 
-  if (shouldSkip) return <p className="text-center mt-10 text-red-500">Erreur : conversationId manquant ou invalide.</p>;
+  if (shouldSkip) return <p className="text-center mt-10 text-red-500">Erreur : identifiant de conversation manquant ou invalide.</p>;
   if (loading) return <p className="text-center mt-10">Chargement...</p>;
   if (error) return <p className="text-center text-red-500">Erreur : {error.message}</p>;
 

@@ -61,7 +61,7 @@ const Navbar = () => {
                 : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
             }
           >
-            Home
+            Accueil
           </NavLink>
           {isLoggedIn ? (
             <>
@@ -69,7 +69,7 @@ const Navbar = () => {
                 onClick={handleLogout}
                 className="text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition"
               >
-                Logout
+                Déconnexion
               </button>
             </>
           ) : (
@@ -82,7 +82,7 @@ const Navbar = () => {
                     : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
                 }
               >
-                Login
+                Connexion
               </NavLink>
               <NavLink
                 to="/register"
@@ -92,14 +92,14 @@ const Navbar = () => {
                     : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
                 }
               >
-                Register
+                Inscription
               </NavLink>
             </>
           )}
         </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-          <span>Dark Mode</span>
+          <span>Mode sombre</span>
           <Switch
             checked={darkMode}
             onCheckedChange={setDarkMode}

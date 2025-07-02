@@ -35,7 +35,7 @@ const ConversationsList = () => {
             // Trouver l'autre participant (pour une conversation à 2)
             const other = conv.participants.find(p => p.user.id !== userId)?.user;
             const initials = other ? (other.firstName?.[0] || other.email[0]).toUpperCase() : '?';
-            const displayName = other ? `${other.firstName || ''} ${other.lastName || ''}`.trim() || 'Utilisateur inconnu' : conv.name || `Conversation #${conv.id}`;
+            const displayName = conv.name || `Conversation n°${conv.id}`;
             return (
               <li
                 key={conv.id}
