@@ -1,21 +1,13 @@
 # render.yaml
-# Place this file at the root of your repository (e.g., project-web-chatapp/render.yaml)
 
 services:
-  # ----------------------------------------------------
-  # NESTJS BACKEND SERVICE
-  # ----------------------------------------------------
-  - type: web # 'web' for public access (API accessible from Frontend and direct API calls)
+  - type: web
     name: nestjs
-    env: docker # Using 'node' env means Render handles Node.js specifics, but still allows Dockerfile
-    rootDir: ./backend # Path to your backend source code
-    dockerfilePath: Dockerfile # Path to Dockerfile relative to rootDir
-    startCommand: ./start.sh # This is the CMD from your Dockerfile
-    docker: 
-      ports:
-        - 3333 # The internal port your NestJS app listens on
-        - 5555 # Keep this if you want Prisma Studio or other tools to access it publicly
-      healthCheckPath: /docs
+    env: node
+    rootDir: ./backend
+    dockerfilePath: Dockerfile
+    startCommand: ./start.sh
+    healthCheckPath: /docs
     envVars:
       - key: REDIS_HOST
         value: redis
@@ -50,64 +42,44 @@ services:
       - key: RABBITMQ_USER
       - key: RABBITMQ_PASSWORD
 
-  # ----------------------------------------------------
-  # POSTGRESQL DATABASE SERVICE
-  # ----------------------------------------------------
   - type: pserv
     name: postgres
     env: docker
-    docker: 
-      image: postgres:16.0 
-      healthCheckPath: /
-      disks:
-        - name: pgdata
-          path: /var/lib/postgresql/data
+    image: postgres:16.0
+    healthCheckPath: /
+    disks:
+      - name: pgdata
+        path: /var/lib/postgresql/data
     envVars:
       - key: POSTGRES_USER
       - key: POSTGRES_PASSWORD
       - key: POSTGRES_DB
         value: chatapp
 
-  # ----------------------------------------------------
-  # RABBITMQ MESSAGE BROKER SERVICE
-  # ----------------------------------------------------
   - type: pserv
     name: rabbitmq
     env: docker
-    docker: 
-      image: rabbitmq:3-management 
-      healthCheckPath: / # Or a specific management path if rabbitmq-diagnostics can expose one via HTTP
+    image: rabbitmq:3-management
+    healthCheckPath: /
     envVars:
       - key: RABBITMQ_DEFAULT_USER
       - key: RABBITMQ_DEFAULT_PASS
 
-  # ----------------------------------------------------
-  # REDIS CACHE/BROKER SERVICE
-  # ----------------------------------------------------
   - type: pserv
     name: redis
     env: docker
-    docker: 
-      image: redis:7 
-      healthCheckPath: / # Redis health checks are typically direct command, so this might be tricky
-                         # You can likely remove this healthCheckPath for redis if Render handles it internally
-      disks: 
-        - name: redis-data
-          path: /data
+    image: redis:7
+    disks:
+      - name: redis-data
+        path: /data
 
-  # ----------------------------------------------------
-  # REACT FRONTEND SERVICE
-  # ----------------------------------------------------
   - type: web
     name: frontend
-    env: docker
+    env: node
     rootDir: ./frontend
     dockerfilePath: Dockerfile
     buildCommand: npm install && npm run build
     startCommand: nginx -g "daemon off;"
-    docker: 
-      ports:
-        - 80
     envVars:
       - key: VITE_API_BASE_URL
         value: /api/v1
