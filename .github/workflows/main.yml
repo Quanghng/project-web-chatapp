@@ -27,19 +27,28 @@ jobs:
           # This creates a minimal .env file to prevent Docker Compose errors
           # when it tries to read the env_file property for services not directly started.
           # These values don't need to be real secrets, just present.
-          echo "POSTGRES_USER=testuser" > ./.env
+          echo "REDIS_HOST=redis" > ./.env          # New
+          echo "REDIS_PORT=6379" >> ./.env          # New
+          echo "POSTGRES_HOST=postgres" >> ./.env  # New
+          echo "POSTGRES_PORT=5432" >> ./.env      # New
+          echo "RABBITMQ_HOST=rabbitmq" >> ./.env  # New
+          echo "RABBITMQ_PORT=5672" >> ./.env      # New
+
+          echo "POSTGRES_USER=testuser" >> ./.env
           echo "POSTGRES_PASSWORD=testpassword" >> ./.env
           echo "RABBITMQ_USER=testuser" >> ./.env
           echo "RABBITMQ_PASSWORD=testpassword" >> ./.env
+
           echo "JWT_ACCESS_TOKEN_SECRET=dummy_jwt_access" >> ./.env
           echo "JWT_REFRESH_TOKEN_SECRET=dummy_jwt_refresh" >> ./.env
           echo "CSRF_SECRET=dummy_csrf_secret" >> ./.env
           echo "CSRF_COOKIE_NAME=dummy_csrf_cookie" >> ./.env
           echo "TOKEN_COOKIE_MODE=dummy_token_mode" >> ./.env
-          echo "NODE_ENV=development" >> ./.env # Default to development for Docker Compose parsing
-          # Add any other variables that are *referenced* in docker-compose.yml via ${VAR} syntax
-          # even if they are defined in .env, they need a placeholder for parsing.
-          echo "FRONTEND_URL=http://localhost" >> ./.env # Example if referenced
+          echo "NODE_ENV=development" >> ./.env
+          echo "FRONTEND_URL=http://localhost" >> ./.env
+          echo "FRONTEND_DOMAIN=localhost" >> ./.env # You have this in your nestjs env
+          echo "DATABASE_URL=postgresql://testuser:testpassword@postgres:5432/chatapp?schema=public" >> ./.env # For the DATABASE_URL in nestjs
+          echo "RABBITMQ_URL=amqp://testuser:testpassword@rabbitmq:5672" >> ./.env # For the RABBITMQ_URL in nestjs
           
       - name: Set up Node.js
         uses: actions/setup-node@v4
