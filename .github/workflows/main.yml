@@ -71,7 +71,7 @@ jobs:
           # This ensures the postgres container is initialized with these credentials
           POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
           POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-          docker compose -f docker-compose.yml up -d postgres redis rabbitmq
+          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
 
           REQUIRED_SERVICES="postgres redis rabbitmq"
           MAX_WAIT_SECONDS=300 # Total wait time (5 minutes)
@@ -85,7 +85,7 @@ jobs:
 
             if [ "$elapsed" -ge "$MAX_WAIT_SECONDS" ]; then
               echo "Timeout: Services did not become healthy within $MAX_WAIT_SECONDS seconds."
-              docker compose -f docker-compose.yml ps -a # Show final status
+              docker compose -f docker-compose.yaml ps -a # Show final status
               exit 1 # Fail the step
             fi
 
