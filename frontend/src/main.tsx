@@ -11,8 +11,8 @@ import { getMainDefinition } from "@apollo/client/utilities";
 
 
 const GRAPHQL_HTTP_URL = import.meta.env.VITE_GRAPHQL_HTTP_URL || "http://localhost:3333/graphql";
-const GRAPHQL_WS_URL = import.meta.env.VITE_GRAPHQL_WS_URL || "ws://localhost:3333/graphql";
-
+//const GRAPHQL_WS_URL = import.meta.env.VITE_GRAPHQL_WS_URL || "ws://localhost:3333/graphql";
+const WS_URL = `ws://${window.location.host}/graphql` || "ws://localhost:3333/graphql";
 
 const httpLink = createHttpLink({
   uri: GRAPHQL_HTTP_URL,
@@ -20,7 +20,7 @@ const httpLink = createHttpLink({
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: GRAPHQL_WS_URL,
+  url: WS_URL,
   connectionParams: () => {
     const token = localStorage.getItem('accessToken');
     return {
