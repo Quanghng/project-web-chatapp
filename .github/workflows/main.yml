@@ -68,7 +68,7 @@ jobs:
       - name: Start dependent services for Backend Tests
         run: |
           echo "Starting Postgres, Redis, and RabbitMQ services..."
-          docker compose -f docker-compose.yml up -d postgres redis rabbitmq
+          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
 
           REQUIRED_SERVICES="postgres redis rabbitmq"
           MAX_WAIT_SECONDS=300 # Total wait time (5 minutes)
@@ -82,7 +82,7 @@ jobs:
 
             if [ "$elapsed" -ge "$MAX_WAIT_SECONDS" ]; then
               echo "Timeout: Services did not become healthy within $MAX_WAIT_SECONDS seconds."
-              docker compose -f docker-compose.yml ps -a # Show final status
+              docker compose -f docker-compose.yaml ps -a # Show final status
               exit 1 # Fail the step
             fi
 
@@ -122,13 +122,13 @@ jobs:
         run: |
           echo "--- Diagnostic Information for Failed Services ---"
           echo "--- Postgres Logs ---"
-          docker compose -f docker-compose.yml logs postgres
+          docker compose -f docker-compose.yaml logs postgres
           echo "--- Redis Logs ---"
-          docker compose -f docker-compose.yml logs redis
+          docker compose -f docker-compose.yaml logs redis
           echo "--- RabbitMQ Logs ---"
-          docker compose -f docker-compose.yml logs rabbitmq
+          docker compose -f docker-compose.yaml logs rabbitmq
           echo "--- Docker Compose PS (all containers) ---"
-          docker compose -f docker-compose.yml ps -a
+          docker compose -f docker-compose.yaml ps -a
 
       - name: Install backend dependencies
         run: npm install
