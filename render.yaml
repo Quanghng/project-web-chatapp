@@ -46,32 +46,27 @@ services:
     name: postgres
     env: docker
     image: postgres:16.0
-    healthCheckPath: /
-    disks:
-      - name: pgdata
-        path: /var/lib/postgresql/data
     envVars:
       - key: POSTGRES_USER
       - key: POSTGRES_PASSWORD
       - key: POSTGRES_DB
         value: chatapp
 
+
   - type: pserv
     name: rabbitmq
     env: docker
     image: rabbitmq:3-management
-    healthCheckPath: /
     envVars:
       - key: RABBITMQ_DEFAULT_USER
       - key: RABBITMQ_DEFAULT_PASS
+
 
   - type: pserv
     name: redis
     env: docker
     image: redis:7
-    disks:
-      - name: redis-data
-        path: /data
+
 
   - type: web
     name: frontend
