@@ -67,8 +67,11 @@ jobs:
 
       - name: Start dependent services for Backend Tests
         run: |
-          echo "Starting Postgres, Redis, and RabbitMQ services..."
-          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
+          # Pass POSTGRES_USER and POSTGRES_PASSWORD directly to docker compose up
+          # This ensures the postgres container is initialized with these credentials
+          POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+          POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+          docker compose -f docker-compose.yml up -d postgres redis rabbitmq
 
           REQUIRED_SERVICES="postgres redis rabbitmq"
           MAX_WAIT_SECONDS=300 # Total wait time (5 minutes)
@@ -82,39 +85,35 @@ jobs:
 
             if [ "$elapsed" -ge "$MAX_WAIT_SECONDS" ]; then
               echo "Timeout: Services did not become healthy within $MAX_WAIT_SECONDS seconds."
-              docker compose -f docker-compose.yaml ps -a # Show final status
+              docker compose -f docker-compose.yml ps -a # Show final status
               exit 1 # Fail the step
             fi
 
             all_healthy=true
             for service in $REQUIRED_SERVICES; do
-              # Check if the service is both running and healthy
-              # Note: docker compose ps output format can vary.
-              # This uses inspect to be more reliable.
               status=$(docker inspect -f '{{.State.Status}}' "$service" 2>/dev/null || true)
               health_status=$(docker inspect -f '{{.State.Health.Status}}' "$service" 2>/dev/null || true)
 
               if [ "$status" != "running" ]; then
                 echo "Service $service is not running (status: $status)..."
                 all_healthy=false
-                break # Exit inner loop, recheck all
+                break
               fi
 
               if [ "$health_status" != "healthy" ]; then
                 echo "Service $service is running, but not yet healthy (health: $health_status)..."
                 all_healthy=false
-                break # Exit inner loop, recheck all
+                break
               fi
             done
 
             if [ "$all_healthy" = true ]; then
               echo "All required services are healthy!"
-              break # Exit outer loop
+              break
             fi
 
             sleep "$SLEEP_INTERVAL"
           done
-        # Ensure the debug logs run even if this step fails for easier troubleshooting
         if: always()
 
       - name: Debug
