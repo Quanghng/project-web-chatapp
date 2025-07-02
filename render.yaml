@@ -1,32 +1,24 @@
 # render.yaml
-# Place this file at the root of your repository (e.g., project-web-chatapp/render.yaml)
 
 services:
-  # ----------------------------------------------------
-  # NESTJS BACKEND SERVICE
-  # ----------------------------------------------------
-  - type: web # 'web' for public access (API accessible from Frontend and direct API calls)
+  - type: web
     name: nestjs
-    env: docker # <<< CORRECTED: Must be 'docker' if using dockerfilePath
+    env: docker
     rootDir: ./backend
     dockerfilePath: Dockerfile
     startCommand: ./start.sh
-    docker: # <<< This block is CRITICAL for all Docker-specific configurations
-      ports: # <<< REQUIRED for 'type: web' service
-        - 3333 # The internal port your NestJS app listens on
-        - 5555 # Keep this if you want Prisma Studio or other tools to access it publicly
-      healthCheckPath: /docs # <<< healthCheckPath MOVED HERE
+    healthCheckPath: /docs
     envVars:
       - key: REDIS_HOST
-        value: redis # Render service name (internal network)
+        value: redis
       - key: REDIS_PORT
         value: 6379
       - key: POSTGRES_HOST
-        value: postgres # Render service name (internal network)
+        value: postgres
       - key: POSTGRES_PORT
         value: 5432
       - key: RABBITMQ_HOST
-        value: rabbitmq # Render service name (internal network)
+        value: rabbitmq
       - key: RABBITMQ_PORT
         value: 5672
       - key: DATABASE_URL
@@ -34,97 +26,72 @@ services:
       - key: PORT
         value: 3333
       - key: FRONTEND_URL
-        value: ${frontend.url} # Correct syntax to reference other blueprint service's URL
+        value: ${frontend.url}
       - key: FRONTEND_DOMAIN
-        value: ${frontend.hostname} # Correct syntax to reference other blueprint service's hostname
+        value: ${frontend.hostname}
       - key: RABBITMQ_URL
         value: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}
-      # Sensitive variables (Render will prompt for these in UI)
-      # ADD sync: false for each variable where Render should prompt for the value
       - key: JWT_ACCESS_TOKEN_SECRET
-        sync: false # <<< ADD THIS
+        sync: false
       - key: JWT_REFRESH_TOKEN_SECRET
-        sync: false # <<< ADD THIS
+        sync: false
       - key: CSRF_SECRET
-        sync: false # <<< ADD THIS
+        sync: false
       - key: CSRF_COOKIE_NAME
-        sync: false # <<< ADD THIS
+        value: "__Host-dx.x-csrf-token"
       - key: TOKEN_COOKIE_MODE
-        sync: false # <<< ADD THIS (if it's a value you set, not derived by NestJS)
+        value: false
       - key: NODE_ENV
-        sync: false # <<< ADD THIS (if it's not a fixed value like 'production')
-      # DB/MQ Credentials (Render will prompt for these in UI)
+        value: development
       - key: POSTGRES_USER
-        sync: false # <<< ADD THIS
+        value: admin
       - key: POSTGRES_PASSWORD
-        sync: false # <<< ADD THIS
+        value: password
       - key: RABBITMQ_USER
-        sync: false # <<< ADD THIS
+        value: admin
       - key: RABBITMQ_PASSWORD
-        sync: false # <<< ADD THIS
+        value: password
 
-  # ----------------------------------------------------
-  # POSTGRESQL DATABASE SERVICE
-  # ----------------------------------------------------
-  - type: pserv # 'pserv' for private (internal-only) service
+  - type: pserv
     name: postgres
     env: docker
-    docker: # <<< CRITICAL: For image, disks, healthCheckPath
-      image: postgres:16.0 # <<< MOVED HERE
-      healthCheckPath: / # Or a more specific path if pg_isready can expose one via HTTP
-      disks: # <<< MOVED HERE
-        - name: pgdata
-          path: /var/lib/postgresql/data
+    rootDir: ./servers/postgres-server
+    dockerfilePath: Dockerfile
     envVars:
       - key: POSTGRES_USER
-        sync: false # <<< ADD THIS
+        value: admin
       - key: POSTGRES_PASSWORD
-        sync: false # <<< ADD THIS
+        value: password
       - key: POSTGRES_DB
         value: chatapp
 
-  # ----------------------------------------------------
-  # RABBITMQ MESSAGE BROKER SERVICE
-  # ----------------------------------------------------
+
   - type: pserv
     name: rabbitmq
     env: docker
-    docker: # <<< CRITICAL: For image
-      image: rabbitmq:3-management # <<< MOVED HERE
-      # healthCheckPath: / # You can add a healthCheckPath here if needed
+    rootDir: ./servers/rabbitmq-server
+    dockerfilePath: Dockerfile
     envVars:
       - key: RABBITMQ_DEFAULT_USER
-        sync: false # <<< ADD THIS
+        value: admin
       - key: RABBITMQ_DEFAULT_PASS
-        sync: false # <<< ADD THIS
+        value: password
 
-  # ----------------------------------------------------
-  # REDIS CACHE/BROKER SERVICE
-  # ----------------------------------------------------
+
   - type: pserv
     name: redis
     env: docker
-    docker: # <<< CRITICAL: For image, disks
-      image: redis:7 # <<< MOVED HERE
-      # healthCheckPath: / # You can add a healthCheckPath here if needed
-      disks: # <<< MOVED HERE
-        - name: redis-data
-          path: /data
-    # Redis typically doesn't need specific env vars for simple usage
+    rootDir: ./servers/redis-server
+    dockerfilePath: Dockerfile
 
-  # ----------------------------------------------------
-  # REACT FRONTEND SERVICE
-  # ----------------------------------------------------
-  - type: web # 'web' for public access (user-facing)
+
+  - type: web
     name: frontend
-    env: docker # <<< CORRECTED: Must be 'docker' if using dockerfilePath
+    env: docker
     rootDir: ./frontend
     dockerfilePath: Dockerfile
     buildCommand: npm install && npm run build
     startCommand: nginx -g "daemon off;"
-    docker: # <<< CRITICAL: For ports
-      ports: # <<< REQUIRED for 'type: web' service
-        - 80
     envVars:
       - key: VITE_API_BASE_URL
         value: /api/v1
