@@ -6,11 +6,8 @@ import {
   IsOptional,
   IsString,
   IsNumber,
-  IsDate,
-  IsArray
+  IsDate
 } from "class-validator"
-import { Comment } from "../../comment/models/comment.model"
-import { Thread } from "src/modules/thread/models/thread.model"
 
 @ObjectType({ description: "user" })
 export class User {
@@ -61,16 +58,4 @@ export class User {
   @IsString()
   @IsOptional()
   refreshToken?: string
-
-  @ApiPropertyOptional({ type: () => [Thread], description: "User's threads" })
-  @Field(type => [Thread], { nullable: true })
-  @IsArray()
-  @IsOptional()
-  thread?: Thread[]
-
-  @ApiPropertyOptional({ type: () => [Comment], description: "User's comments" })
-  @Field(type => [Comment], { nullable: true })
-  @IsArray()
-  @IsOptional()
-  comments?: Comment[]
 }
