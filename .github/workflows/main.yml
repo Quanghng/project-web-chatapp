@@ -67,10 +67,68 @@ jobs:
 
       - name: Start dependent services for Backend Tests
         run: |
-          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
-          echo "Waiting for PostgreSQL, Redis, and RabbitMQ services to be healthy..."
-          docker compose -f docker-compose.yml wait --timeout 300 postgres rabbitmq redis
-          echo "Dependent services are healthy."
+          echo "Starting Postgres, Redis, and RabbitMQ services..."
+          docker compose -f docker-compose.yml up -d postgres redis rabbitmq
+
+          REQUIRED_SERVICES="postgres redis rabbitmq"
+          MAX_WAIT_SECONDS=300 # Total wait time (5 minutes)
+          SLEEP_INTERVAL=10    # Check every 10 seconds
+
+          echo "Waiting for services to be healthy..."
+          start_time=$(date +%s)
+          while true; do
+            current_time=$(date +%s)
+            elapsed=$((current_time - start_time))
+
+            if [ "$elapsed" -ge "$MAX_WAIT_SECONDS" ]; then
+              echo "Timeout: Services did not become healthy within $MAX_WAIT_SECONDS seconds."
+              docker compose -f docker-compose.yml ps -a # Show final status
+              exit 1 # Fail the step
+            fi
+
+            all_healthy=true
+            for service in $REQUIRED_SERVICES; do
+              # Check if the service is both running and healthy
+              # Note: docker compose ps output format can vary.
+              # This uses inspect to be more reliable.
+              status=$(docker inspect -f '{{.State.Status}}' "$service" 2>/dev/null || true)
+              health_status=$(docker inspect -f '{{.State.Health.Status}}' "$service" 2>/dev/null || true)
+
+              if [ "$status" != "running" ]; then
+                echo "Service $service is not running (status: $status)..."
+                all_healthy=false
+                break # Exit inner loop, recheck all
+              fi
+
+              if [ "$health_status" != "healthy" ]; then
+                echo "Service $service is running, but not yet healthy (health: $health_status)..."
+                all_healthy=false
+                break # Exit inner loop, recheck all
+              fi
+            done
+
+            if [ "$all_healthy" = true ]; then
+              echo "All required services are healthy!"
+              break # Exit outer loop
+            fi
+
+            sleep "$SLEEP_INTERVAL"
+          done
+        # Ensure the debug logs run even if this step fails for easier troubleshooting
+        if: always()
+
+      - name: Debug: Show logs of dependent services (if previous step failed)
+        if: failure() # Only run this if the previous step (Start dependent services) failed
+        run: |
+          echo "--- Diagnostic Information for Failed Services ---"
+          echo "--- Postgres Logs ---"
+          docker compose -f docker-compose.yml logs postgres
+          echo "--- Redis Logs ---"
+          docker compose -f docker-compose.yml logs redis
+          echo "--- RabbitMQ Logs ---"
+          docker compose -f docker-compose.yml logs rabbitmq
+          echo "--- Docker Compose PS (all containers) ---"
+          docker compose -f docker-compose.yml ps -a
 
       - name: Install backend dependencies
         run: npm install
