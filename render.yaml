@@ -7,7 +7,7 @@ services:
   # ----------------------------------------------------
   - type: web # 'web' for public access (API accessible from Frontend and direct API calls)
     name: nestjs
-    env: node # Using 'node' env means Render handles Node.js specifics, but still allows Dockerfile
+    env: docker # Using 'node' env means Render handles Node.js specifics, but still allows Dockerfile
     rootDir: ./backend # Path to your backend source code
     dockerfilePath: Dockerfile # Path to Dockerfile relative to rootDir
     startCommand: ./start.sh # This is the CMD from your Dockerfile
@@ -100,7 +100,7 @@ services:
   # ----------------------------------------------------
   - type: web
     name: frontend
-    env: node
+    env: docker
     rootDir: ./frontend
     dockerfilePath: Dockerfile
     buildCommand: npm install && npm run build
