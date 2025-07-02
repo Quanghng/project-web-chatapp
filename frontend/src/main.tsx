@@ -9,15 +9,23 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
+
+const GRAPHQL_HTTP_URL = import.meta.env.VITE_GRAPHQL_HTTP_URL || "http://localhost:3333/graphql";
+const GRAPHQL_WS_URL = import.meta.env.VITE_GRAPHQL_WS_URL || "ws://localhost:3333/graphql";
+
+
 const httpLink = createHttpLink({
-  uri: "http://localhost:3333/graphql",
+  uri: GRAPHQL_HTTP_URL,
   credentials: "include", 
 });
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: "ws://localhost:3333/graphql",
-  connectionParams: {
-    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+  url: GRAPHQL_WS_URL,
+  connectionParams: () => {
+    const token = localStorage.getItem('accessToken');
+    return {
+      Authorization: token ? `Bearer ${token}` : '',
+    };
   },
 }));
 
