@@ -69,7 +69,7 @@ jobs:
         run: |
           docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
           echo "Waiting for PostgreSQL, Redis, and RabbitMQ services to be healthy..."
-          docker compose -f docker-compose.yaml wait postgres rabbitmq redis
+          docker compose -f docker-compose.yml wait --timeout 300 postgres rabbitmq redis
           echo "Dependent services are healthy."
 
       - name: Install backend dependencies
