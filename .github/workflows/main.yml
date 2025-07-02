@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Trigger on pushes to the main branch (e.g., after merging a PR)
+      - feature/cicd # Trigger on pushes to the main branch (e.g., after merging a PR)
   pull_request:
     branches:
-      - main # Trigger on pull requests targeting the main branch (for CI checks)
+      - feature/cicd # Trigger on pull requests targeting the main branch (for CI checks)
 
 env:
   # Base image names (will be prefixed with GHCR path later)
@@ -145,7 +145,7 @@ jobs:
             echo "Logging in to GitHub Container Registry..."
             echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin || { echo "Error logging into GHCR."; exit 1; }
 
-            git pull origin main || { echo "Error pulling latest code."; exit 1; }
+            # git pull origin main || { echo "Error pulling latest code."; exit 1; }
 
             echo "Stopping and removing old containers..."
             docker compose down --volumes --remove-orphans
