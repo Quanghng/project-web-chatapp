@@ -7,58 +7,44 @@ services:
   # ----------------------------------------------------
   - type: web # 'web' for public access (API accessible from Frontend and direct API calls)
     name: nestjs
-    env: node
+    env: node # Using 'node' env means Render handles Node.js specifics, but still allows Dockerfile
     rootDir: ./backend # Path to your backend source code
     dockerfilePath: Dockerfile # Path to Dockerfile relative to rootDir
-    # buildCommand is optional if your Dockerfile handles all steps
-    # (Your backend Dockerfile does handle all build steps with `npm install` and `COPY . .`)
-    # buildCommand: npm install # No npm run build needed if using npm run start (starts dev server) or node dist/main (starts prod build)
     startCommand: ./start.sh # This is the CMD from your Dockerfile
-    ports:
-      - 3333 # The internal port your NestJS app listens on
-      - 5555 # Keep this if you want Prisma Studio or other tools to access it publicly
-             # If you only need it internally, change to 'pserv' and remove this port,
-             # or comment out this port here.
-    healthCheckPath: /docs # Crucial: Ensure your NestJS app actually serves a 200 OK at /docs
-                           # If not, change this to an existing healthy endpoint (e.g., /health, /status, or just /)
-                           # or remove it for a default port check.
+    docker: 
+      ports:
+        - 3333 # The internal port your NestJS app listens on
+        - 5555 # Keep this if you want Prisma Studio or other tools to access it publicly
+      healthCheckPath: /docs
     envVars:
-      # These will be set as environment variables inside the NestJS container
       - key: REDIS_HOST
-        value: redis # Render service name (internal network)
+        value: redis
       - key: REDIS_PORT
         value: 6379
       - key: POSTGRES_HOST
-        value: postgres # Render service name (internal network)
+        value: postgres
       - key: POSTGRES_PORT
         value: 5432
       - key: RABBITMQ_HOST
-        value: rabbitmq # Render service name (internal network)
+        value: rabbitmq
       - key: RABBITMQ_PORT
         value: 5672
-      # DATABASE_URL will be constructed using secrets provided in Render UI
       - key: DATABASE_URL
         value: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/chatapp?schema=public
       - key: PORT
         value: 3333
-      # These FRONTEND_* variables are for CORS on your backend.
-      # Render will automatically inject the frontend's public URL/hostname here.
-      # This is correct syntax for Render Blueprints to get another service's URL.
       - key: FRONTEND_URL
-        value: ${frontend.url} # e.g., https://your-frontend.onrender.com
+        value: ${frontend.url}
       - key: FRONTEND_DOMAIN
-        value: ${frontend.hostname} # e.g., your-frontend.onrender.com
+        value: ${frontend.hostname}
       - key: RABBITMQ_URL
         value: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}
-      # Sensitive variables (Render will prompt for these in UI)
-      # These will be explicitly set in Render's environment variable section for the blueprint.
       - key: JWT_ACCESS_TOKEN_SECRET
       - key: JWT_REFRESH_TOKEN_SECRET
       - key: CSRF_SECRET
       - key: CSRF_COOKIE_NAME
       - key: TOKEN_COOKIE_MODE
       - key: NODE_ENV
-      # DB/MQ Credentials (Render will prompt for these in UI)
       - key: POSTGRES_USER
       - key: POSTGRES_PASSWORD
       - key: RABBITMQ_USER
@@ -67,16 +53,16 @@ services:
   # ----------------------------------------------------
   # POSTGRESQL DATABASE SERVICE
   # ----------------------------------------------------
-  - type: pserv # 'pserv' for private (internal-only) service
+  - type: pserv
     name: postgres
-    image: postgres:16.0 # Use the official Docker image
-    env: docker # Specify this is a Docker image, not source code build
-    # Add a persistent disk for your database data
-    disks:
-      - name: pgdata # Disk name
-        path: /var/lib/postgresql/data # Mount path inside the container
+    env: docker
+    docker: 
+      image: postgres:16.0 
+      healthCheckPath: /
+      disks:
+        - name: pgdata
+          path: /var/lib/postgresql/data
     envVars:
-      # Database credentials (Render will prompt for these in UI)
       - key: POSTGRES_USER
       - key: POSTGRES_PASSWORD
       - key: POSTGRES_DB
@@ -87,15 +73,11 @@ services:
   # ----------------------------------------------------
   - type: pserv
     name: rabbitmq
-    image: rabbitmq:3-management
     env: docker
-    # For a demo, Render's default ephemeral storage might be fine.
-    # For production, consider adding a disk here if message persistence is critical.
-    # disks:
-    #   - name: rabbitmq-data
-    #     path: /var/lib/rabbitmq/
+    docker: 
+      image: rabbitmq:3-management 
+      healthCheckPath: / # Or a specific management path if rabbitmq-diagnostics can expose one via HTTP
     envVars:
-      # RabbitMQ credentials (Render will prompt for these in UI)
       - key: RABBITMQ_DEFAULT_USER
       - key: RABBITMQ_DEFAULT_PASS
 
@@ -104,31 +86,30 @@ services:
   # ----------------------------------------------------
   - type: pserv
     name: redis
-    image: redis:7
     env: docker
-    # Add a persistent disk for Redis data (if you need it to survive redeploys)
-    disks:
-      - name: redis-data
-        path: /data
-    # Redis typically doesn't need specific env vars for simple usage
+    docker: 
+      image: redis:7 
+      healthCheckPath: / # Redis health checks are typically direct command, so this might be tricky
+                         # You can likely remove this healthCheckPath for redis if Render handles it internally
+      disks: 
+        - name: redis-data
+          path: /data
 
   # ----------------------------------------------------
   # REACT FRONTEND SERVICE
   # ----------------------------------------------------
-  - type: web # 'web' for public access (user-facing)
+  - type: web
     name: frontend
     env: node
-    rootDir: ./frontend # Path to your frontend source code
-    dockerfilePath: Dockerfile # Path to Dockerfile relative to rootDir
-    buildCommand: npm install && npm run build # React build command
-    startCommand: nginx -g "daemon off;" # Nginx CMD from your Dockerfile
-    ports:
-      - 80 # The internal port Nginx listens on
+    rootDir: ./frontend
+    dockerfilePath: Dockerfile
+    buildCommand: npm install && npm run build
+    startCommand: nginx -g "daemon off;"
+    docker: 
+      ports:
+        - 80
     envVars:
-      # These frontend env vars are for the React app at build time.
-      # They point to paths that will be proxied by the frontend's Nginx.
-      # Render will pass these as environment variables to the build step.
       - key: VITE_API_BASE_URL
-        value: /api/v1 
+        value: /api/v1
       - key: VITE_GRAPHQL_HTTP_URL
         value: /graphql
