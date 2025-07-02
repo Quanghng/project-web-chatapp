@@ -39,9 +39,9 @@ jobs:
 
       - name: Start dependent services for Backend Tests
         run: |
-          docker compose -f docker-compose.yml up -d postgres redis rabbitmq
+          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
           echo "Waiting for PostgreSQL, Redis, and RabbitMQ services to be healthy..."
-          docker compose -f docker-compose.yml wait postgres rabbitmq redis
+          docker compose -f docker-compose.yaml wait postgres rabbitmq redis
           echo "Dependent services are healthy."
 
       - name: Install backend dependencies
