@@ -21,7 +21,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
+      - name: Create dummy .env for Docker Compose in CI
+        run: |
+          # This creates a minimal .env file to prevent Docker Compose errors
+          # when it tries to read the env_file property for services not directly started.
+          # These values don't need to be real secrets, just present.
+          echo "POSTGRES_USER=testuser" > ./.env
+          echo "POSTGRES_PASSWORD=testpassword" >> ./.env
+          echo "RABBITMQ_USER=testuser" >> ./.env
+          echo "RABBITMQ_PASSWORD=testpassword" >> ./.env
+          echo "JWT_ACCESS_TOKEN_SECRET=dummy_jwt_access" >> ./.env
+          echo "JWT_REFRESH_TOKEN_SECRET=dummy_jwt_refresh" >> ./.env
+          echo "CSRF_SECRET=dummy_csrf_secret" >> ./.env
+          echo "CSRF_COOKIE_NAME=dummy_csrf_cookie" >> ./.env
+          echo "TOKEN_COOKIE_MODE=dummy_token_mode" >> ./.env
+          echo "NODE_ENV=development" >> ./.env # Default to development for Docker Compose parsing
+          # Add any other variables that are *referenced* in docker-compose.yml via ${VAR} syntax
+          # even if they are defined in .env, they need a placeholder for parsing.
+          echo "FRONTEND_URL=http://localhost" >> ./.env # Example if referenced
+          
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -90,11 +109,6 @@ jobs:
       - name: Build frontend static files
         run: npm run build
         working-directory: ./frontend
-
-      - name: Prepare frontend build args
-        id: prepare_frontend_args
-        run: |
-          echo "WS_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}" | sed 's|^http|ws|' >> "$GITHUB_ENV"
       
       - name: Build and push Frontend Docker image to GHCR
         uses: docker/build-push-action@v5
