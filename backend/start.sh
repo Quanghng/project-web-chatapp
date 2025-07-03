@@ -9,8 +9,8 @@ echo "Waiting for PostgreSQL to be healthy..."
 
 echo "Running Prisma migrations..."
 # This command applies any pending migrations to the database.
-npx prisma migrate deploy
-
+npm run prisma:generate
+npm run migrate:deploy
 
 echo "Starting NestJS application..."
 # Use 'exec' to replace the current shell process with the Node.js process,
