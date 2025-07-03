@@ -37,9 +37,6 @@ services:
     ports:
       - 3333:3333
       - 5555:5555
-    volumes:
-      - .:/project-web-chatapp
-    working_dir: /project-web-chatapp/backend
     networks:
       - chatapp
     # Add a restart policy to handle initial connection failures robustly
