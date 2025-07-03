@@ -23,8 +23,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set lowercase repository owner
-        id: set_lowercase_owner # Give this step an ID to reference its output
-        run: echo "LOWERCASE_OWNER=${{ github.repository_owner | lowercase }}" >> $GITHUB_ENV
+        id: set_lowercase_owner
+        run: echo "LOWERCASE_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
         
       - name: Create dummy .env for Docker Compose in CI
         run: |
