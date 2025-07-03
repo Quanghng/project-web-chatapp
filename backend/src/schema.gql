@@ -2,35 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Comment {
-  id: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  content: String!
-  likes: Int!
-  threadId: Int!
-  userId: Int!
-  user: User!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type Thread {
-  id: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  title: String!
-  content: String!
-  likes: Int!
-  comments: [Comment!]
-  userId: Int!
-  imageUrl: String
-  user: User!
-}
-
 """user"""
 type User {
   id: Int!
@@ -41,10 +12,12 @@ type User {
   firstName: String
   lastName: String
   refreshToken: String
-  thread: [Thread!]
-  comments: [Comment!]
-  getThreads: [Thread!]!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Message {
   id: Int!
@@ -75,9 +48,6 @@ type Conversation {
 type Query {
   getUser(id: Int!): User!
   users: [User!]!
-  getThreads: [Thread!]!
-  getThread(threadId: Float!): Thread!
-  getComments(threadId: Float!): [Comment!]!
   getConversations: [Conversation!]!
   getConversation(id: Int!): Conversation
   getConversationsByUser(userId: Int!): [Conversation!]!
@@ -87,12 +57,6 @@ type Query {
 type Mutation {
   updateUser(inputs: ModifyUserDto!): User!
   heartbeat: Boolean!
-  postThread(inputs: PostThreadDto!): Thread!
-  modifyThread(inputs: ModifyThreadDto!): Thread!
-  deleteThread(threadId: Float!): Thread!
-  likeThread(threadId: Float!): Thread!
-  unlikeThread(threadId: Float!): Thread!
-  postComment(inputs: PostCommentDto!): Comment!
   createConversation(inputs: CreateConversationDto!): Conversation!
   addParticipantToConversation(conversationId: Int!, userId: Int!): Conversation!
   sendMessage(inputs: SendMessageDto!): Message!
@@ -102,25 +66,6 @@ input ModifyUserDto {
   userId: Int!
   firstName: String!
   lastName: String!
-}
-
-input PostThreadDto {
-  userId: Int!
-  title: String!
-  content: String!
-  imageUrl: String
-}
-
-input ModifyThreadDto {
-  threadId: Int!
-  title: String!
-  content: String!
-}
-
-input PostCommentDto {
-  userId: Int!
-  threadId: Int!
-  content: String!
 }
 
 input CreateConversationDto {
