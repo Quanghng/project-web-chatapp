@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule, CsrfModule, ThreadModule, PrismaModule, UserModule, CommentModule } from './modules';
+import { AuthModule, CsrfModule, PrismaModule, UserModule } from './modules';
 import { RabbitMQModule } from './modules/rabbitmq/rabbitmq.module';
 import { ConversationModule } from './modules/conversation/conversation.module';
 import { MessageModule } from './modules/message/message.module';
@@ -47,7 +47,7 @@ import { RedisModule } from './modules/redis/redis.module';
       },
       'subscriptions-transport-ws': true,
     },
-  }), ConfigModule.forRoot({ isGlobal: true }), CsrfModule, AuthModule, UserModule, ThreadModule, CommentModule, PrismaModule, RabbitMQModule, ConversationModule, MessageModule, RedisModule],
+  }), ConfigModule.forRoot({ isGlobal: true }), CsrfModule, AuthModule, UserModule, PrismaModule, RabbitMQModule, ConversationModule, MessageModule, RedisModule],
   controllers: [],
   providers: [],
 })

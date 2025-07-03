@@ -7,6 +7,7 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
 import { TokenDto } from "./dto/tokens.dto";
+import { pubSub } from 'src/modules/user/user.resolver';
 
 @Injectable()
 export class AuthService {
@@ -47,6 +48,15 @@ export class AuthService {
           refreshToken: hashedRefreshToken
         }
       })
+
+      await pubSub.publish('userLoggedIn', {
+        userLoggedIn: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        }
+      });
 
       // Send tokens with cookie httpOnly
       if (this.token_mode_cookie === 'true') {
@@ -98,6 +108,16 @@ export class AuthService {
         refreshToken: hashedRefreshToken
       }
     })
+
+    await pubSub.publish('userLoggedIn', {
+      userLoggedIn: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      }
+    });
+
 
     // Send tokens with cookie httpOnly
     if (this.token_mode_cookie === 'true') {

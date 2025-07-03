@@ -1,14 +1,14 @@
-import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { UserService } from "./user.service";
 import { User } from "./models/user.model";
-import { Thread } from "../thread/models/thread.model";
-import { ThreadLoader } from "../thread/loaders/thread.loader";
 import { ModifyUserDto } from "./dto/modify-user.dto";
+import { PubSub } from "graphql-subscriptions";
+
+export const pubSub = new PubSub();
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(
-    private readonly threadLoader: ThreadLoader,
     private userService: UserService,
   ) { }
 
@@ -24,13 +24,15 @@ export class UserResolver {
     return this.userService.updateUser(inputs);
   }
 
-  @ResolveField(() => [Thread])
-  async getThreads(@Parent() user: User): Promise<Thread[]> {
-    return this.threadLoader.batchThreadsByUser.load(user.id);
-  }
-
   @Query(() => [User])
   async users(): Promise<User[]> {
     return this.userService.findAll();
+  }
+
+  @Subscription(() => User, {
+    resolve: (payload) => payload.userLoggedIn, // payload format: { userLoggedIn: User }
+  })
+  userLoggedIn() {
+    return pubSub.asyncIterator('userLoggedIn');
   }
 }
