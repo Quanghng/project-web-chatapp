@@ -57,6 +57,17 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      # --- Build Backend Image EARLY for CI Testing ---
+      # Need to build NestJS image so it can be run for local tests/codegen
+      - name: Build Backend Docker image for CI tests
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false # Do not push yet, just build locally
+          tags: nestjs_local_test:latest # A temporary local tag
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Start dependent services for Backend Tests
         run: |
           POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
@@ -146,12 +157,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
-      - name: Generate GraphQL types
-        run: npm run generate
-        working-directory: ./frontend
-        env:
-          VITE_GRAPHQL_HTTP_URL: ${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
-          VITE_API_BASE_URL: ${{ secrets.FRONTEND_API_BASE_URL_PROD }}
       - name: Build frontend static files
         run: npm run build
         working-directory: ./frontend
