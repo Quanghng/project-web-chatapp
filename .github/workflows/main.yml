@@ -155,11 +155,11 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository_owner }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
           build-args: |
             VITE_API_BASE_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}
             VITE_GRAPHQL_HTTP_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
-            VITE_GRAPHQL_WS_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD | replace('http', 'ws') }}/graphql
+            VITE_GRAPHQL_WS_URL=${{ env.WS_URL }}/graphql
           cache-from: type=gha
           cache-to: type=gha,mode=max
   cd:
