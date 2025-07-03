@@ -164,7 +164,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -182,7 +182,7 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
           build-args: |
             VITE_API_BASE_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}
             VITE_GRAPHQL_HTTP_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
@@ -217,13 +217,13 @@ jobs:
             echo "Stopping and removing old containers..."
             docker compose down --volumes --remove-orphans
 
-            echo "Pulling latest backend image: ghcr.io/${{ github.repository_owner }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}"
-            docker pull ghcr.io/${{ github.repository_owner }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling backend image."; exit 1; }
-            docker tag ghcr.io/${{ github.repository_owner }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} nestjs:latest
+            echo "Pulling latest backend image: ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}"
+            docker pull ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling backend image."; exit 1; }
+            docker tag ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} nestjs:latest
 
-            echo "Pulling latest frontend image: ghcr.io/${{ github.repository_owner }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}"
-            docker pull ghcr.io/${{ github.repository_owner }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling frontend image."; exit 1; }
-            docker tag ghcr.io/${{ github.repository_owner }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} frontend:latest
+            echo "Pulling latest frontend image: ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}"
+            docker pull ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling frontend image."; exit 1; }
+            docker tag ghcr.io/${{ github.repository_owner | lowercase }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} frontend:latest
 
             echo "Starting services using Docker Compose..."
             docker compose --env-file ./.env up -d --remove-orphans || { echo "Error starting services."; exit 1; }
