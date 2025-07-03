@@ -1,8 +1,4 @@
-# 🥘 **le projet ChatApp – Fullstack Application**  
-
-This application consists of two main parts:
-- **Backend**: 
-- **Frontend**: 
+# **le projet ChatApp – Fullstack Application**  
 
 ---
 
@@ -76,7 +72,17 @@ POSTGRES_PORT=5432
 
 Depuis le dossier **`project-web-chatapp/`** :
 
-#### 1. Construire et démarrer tous les services en arrière-plan :
+#### 1. Installer les dépendances Node.js dans le back-end et le front-end
+
+```bash
+cd backend
+npm install
+cd ../frontend
+npm install
+cd ..
+```
+
+#### 2. Construire et démarrer tous les services en arrière-plan :
 
 ```bash
 docker compose up -d --build
@@ -89,7 +95,7 @@ Cette commande lance :
 - RabbitMQ
 - Redis
 
-#### 2. Exécuter les migrations Prisma dans le conteneur NestJS :
+#### 3. Exécuter les migrations Prisma dans le conteneur NestJS :
 
 ```bash
 docker compose exec nestjs sh
@@ -107,7 +113,7 @@ Puis quitter le conteneur :
 exit
 ```
 
-#### 3. Si le front-end ne s'est pas lancé automatiquement, lancer-le manuellement :
+#### 4. Si le front-end ne s'est pas lancé automatiquement, lancer-le manuellement :
 
 ```bash
 docker compose up -d frontend
@@ -122,4 +128,3 @@ http://localhost
 ```
 
 ---
-
