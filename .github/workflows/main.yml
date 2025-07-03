@@ -112,11 +112,11 @@ jobs:
         run: |
           echo "--- Diagnostic Information for Failed Services ---"
           echo "--- Postgres Logs ---"
-          docker compose -f .yaml logs postgres
+          docker compose -f docker-compose.yaml logs postgres
           echo "--- Redis Logs ---"
-          docker compose -f .yaml logs redis
+          docker compose -f docker-compose.yaml logs redis
           echo "--- RabbitMQ Logs ---"
-          docker compose -f .yaml logs rabbitmq
+          docker compose -f docker-compose.yaml logs rabbitmq
           echo "--- NestJS Logs ---" 
           docker compose -f docker-compose.yaml logs nestjs
           echo "--- Docker Compose PS (all containers) ---"
