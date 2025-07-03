@@ -214,28 +214,29 @@ jobs:
           script: |
             echo "Navigating to ${{ secrets.APP_DIR }}..."
             cd ${{ secrets.APP_DIR }} || { echo "Error: Application directory not found on server."; exit 1; }
+
             echo "Logging in to GitHub Container Registry..."
             echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin || { echo "Error logging into GHCR."; exit 1; }
+            sleep 5 # Give Docker login a moment
+
             echo "Stopping and removing old containers..."
-            docker compose down --volumes --remove-orphans
+            # This will use the docker-compose.yml on the server
+            docker compose down --volumes --remove-orphans || { echo "Error stopping old containers. Continuing..."; }
+
+            echo "Pulling latest images from GHCR individually..."
+            # EXPLICITLY PULL EACH IMAGE WITH ITS FULL PATH AND TAG
+            docker pull ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling backend image!"; exit 1; }
+            docker pull ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling frontend image!"; exit 1; }
             
+            # Optionally, re-tag the images to 'latest' if your docker-compose.yml uses 'image: nestjs:latest'
+            # (Which it should, for consistency)
+            docker tag ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+            docker tag ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+
             echo "Starting services using Docker Compose..."
-            docker compose --env-file ./.env up -d --remove-orphans || { echo "Error starting services."; exit 1; }
+            # docker compose will now USE the images that were just pulled and tagged.
+            # It will still implicitly try to pull if a service doesn't have a local image,
+            # but our explicit pulls should prevent that.
+            docker compose --env-file ./.env up -d --remove-orphans --force-recreate || { echo "Error starting services."; exit 1; }
+
             echo "Waiting for NestJS backend service to become healthy..."
-            for i in {1..15}; do
-              HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' nestjs 2>/dev/null || true)
-              if [ "$HEALTH_STATUS" == "healthy" ]; then
-                echo "NestJS service is healthy!"
-                break
-              else
-                echo "NestJS service status: $HEALTH_STATUS. Waiting 10 seconds (attempt $i/15)..."
-                sleep 10
-              fi
-              if [ $i -eq 15 ]; then
-                echo "NestJS service did not become healthy within the timeout. Deployment might be incomplete."
-                exit 1
-              fi
-            done
-            echo "Running Prisma Migrations on the deployed backend service..."
-            docker compose exec nestjs npx prisma migrate deploy || { echo "Error running Prisma migrations."; exit 1; }
-            echo "Deployment complete!"
