@@ -171,6 +171,12 @@ jobs:
       - name: Build frontend static files
         run: npm run build
         working-directory: ./frontend
+      - name: Calculate VITE_GRAPHQL_WS_URL for build-args
+        id: calculate_ws_url
+        run: |
+          WS_URL_FOR_BUILD="${{ secrets.FRONTEND_API_BASE_URL_PROD | replace('http', 'ws') }}"
+          echo "WS_URL_FOR_BUILD=${WS_URL_FOR_BUILD}" >> "$GITHUB_ENV"
+
       - name: Build and push Frontend Docker image to GHCR
         uses: docker/build-push-action@v5
         with:
@@ -181,7 +187,7 @@ jobs:
           build-args: |
             VITE_API_BASE_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}
             VITE_GRAPHQL_HTTP_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
-            VITE_GRAPHQL_WS_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD | replace('http', 'ws') }}/graphql
+            VITE_GRAPHQL_WS_URL=${{ env.WS_URL_FOR_BUILD }}/graphql
           cache-from: type=gha
           cache-to: type=gha,mode=max
   cd:
