@@ -117,9 +117,6 @@ services:
     build:
       context: ./frontend 
       dockerfile: Dockerfile
-      args:
-      - VITE_API_BASE_URL=/api/v1 
-      - VITE_GRAPHQL_HTTP_URL=/graphql
     container_name: frontend
     ports:
       - 80:80 # Map host port 80 to container port 80 (Nginx default)
