@@ -174,8 +174,12 @@ jobs:
       - name: Calculate VITE_GRAPHQL_WS_URL for build-args
         id: calculate_ws_url
         run: |
-          WS_URL_FOR_BUILD="${{ secrets.FRONTEND_API_BASE_URL_PROD | replace('http', 'ws') }}"
-          echo "WS_URL_FOR_BUILD=${WS_URL_FOR_BUILD}" >> "$GITHUB_ENV"
+          # Get the base URL from secrets
+          BASE_URL="${{ secrets.FRONTEND_API_BASE_URL_PROD }}"
+          # Use sed to replace 'http' with 'ws'
+          WS_URL_FOR_BUILD=$(echo "$BASE_URL" | sed 's/^http/ws/')
+          echo "Calculated WS URL for build: $WS_URL_FOR_BUILD" # Debug output
+          echo "WS_URL_FOR_BUILD=$WS_URL_FOR_BUILD" >> "$GITHUB_ENV"
 
       - name: Build and push Frontend Docker image to GHCR
         uses: docker/build-push-action@v5
