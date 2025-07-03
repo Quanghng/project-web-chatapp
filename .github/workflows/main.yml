@@ -181,7 +181,7 @@ jobs:
           build-args: |
             VITE_API_BASE_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}
             VITE_GRAPHQL_HTTP_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
-            VITE_GRAPHQL_WS_URL=${{ env.WS_URL }}/graphql
+            VITE_GRAPHQL_WS_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD | replace('http', 'ws') }}/graphql
           cache-from: type=gha
           cache-to: type=gha,mode=max
   cd:
