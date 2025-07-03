@@ -1,6 +1,7 @@
 // frontend/vite.config.ts
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 // TEMPORARY: HARDCODE YOUR SERVER'S PUBLIC IP FOR TESTING
 const PUBLIC_SERVER_IP = "http://13.60.250.150";
@@ -15,6 +16,14 @@ export default defineConfig({
     'import.meta.env.VITE_GRAPHQL_HTTP_URL': JSON.stringify(GRAPHQL_HTTP_URL_TEMP),
     'import.meta.env.VITE_GRAPHQL_WS_URL': JSON.stringify(GRAPHQL_WS_URL_TEMP),
     // Add a unique debug identifier to confirm this specific build
-    'import.meta.env.VITE_BUILD_DEBUG_ID': JSON.stringify("FORCED_DEBUG_BUILD_2024_07_03_Z"), // Change Z to A, B, C etc. for each test
+    'import.meta.env.VITE_BUILD_DEBUG_ID': JSON.stringify("FORCED_DEBUG_BUILD_2024_07_03_Z"),
+  },
+  server: {
+    port: 5174, // Your local development server port
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'), // This maps @/ to src/
+    },
   },
 });
