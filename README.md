@@ -1,9 +1,8 @@
-# 🥘 **Eatstagram – Fullstack Application**  
-Eatstagram is a modern fullstack social app that lets users create, like, and comment on cooking recipes ("threads") with a clean UI and robust backend.
+# 🥘 **le projet ChatApp – Fullstack Application**  
 
 This application consists of two main parts:
-- **Backend**: Built with NestJS, GraphQL, Prisma, and PostgreSQL.
-- **Frontend**: Built with React, TypeScript, TailwindCSS, and Apollo Client.
+- **Backend**: 
+- **Frontend**: 
 
 ---
 
@@ -19,47 +18,108 @@ Before setting up the full application, ensure you have the following installed 
 
 ---
 
-## 🔧 General Setup Instructions
+# Comment démarrer le projet ChatApp
 
-1. **Clone the repository**
+### Configuration des fichiers `.env`
 
-```bash
-git clone https://github.com/Quanghng/graphql-project.git
-cd graphql-project
+#### À la racine du projet (`.env`) :
+
+```env
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=password
+POSTGRES_DB=chatapp
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+
+RABBITMQ_USER=admin
+RABBITMQ_PASSWORD=password
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+
+REDIS_HOST=redis
+REDIS_PORT=6379
 ```
 
-2. **Set up the Backend**
+#### Dans `backend/.env` :
 
-Follow the detailed setup instructions in `backend/README.md`  
-This includes configuring environment variables, running the PostgreSQL database in Docker, installing dependencies, and starting the server.
+```env
+DATABASE_URL="postgresql://admin:password@postgres:5432/graphproject"
+FRONTEND_URL=http://localhost
+FRONTEND_DOMAIN=localhost
+JWT_ACCESS_TOKEN_SECRET=your_jwt_secret
+JWT_REFRESH_TOKEN_SECRET=your_refresh_secret
+CSRF_SECRET=your_csrf_secret
+CSRF_COOKIE_NAME="__Host-dx.x-csrf-token"
 
-3. **Set up the Frontend**
+TOKEN_COOKIE_MODE=false
+NODE_ENV=development
 
-Follow the instructions in `frontend/README.md`  
-Ensure the backend is running first, then start the Vite development server for the frontend.
+RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+RABBITMQ_USER=admin
+RABBITMQ_PASSWORD=password
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=password
+POSTGRES_DB=chatapp
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+```
 
 ---
 
-## 🚀 Application URLs
+### Démarrage du projet complet
 
-- **Frontend**: [http://localhost:5174](http://localhost:5174)  
-- **Backend GraphQL API**: [http://localhost:3333/graphql](http://localhost:3333/graphql)  
-- **Backend REST Auth API**: [http://localhost:3333/api/v1](http://localhost:3333/api/v1)  
+Depuis le dossier **`project-web-chatapp/`** :
+
+#### 1. Construire et démarrer tous les services en arrière-plan :
+
+```bash
+docker compose up -d --build
+```
+
+Cette commande lance :
+- le back-end (NestJS)
+- le front-end
+- la base de données Postgres
+- RabbitMQ
+- Redis
+
+#### 2. Exécuter les migrations Prisma dans le conteneur NestJS :
+
+```bash
+docker compose exec nestjs sh
+```
+
+Dans le conteneur NestJS, exécuter :
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Puis quitter le conteneur :
+
+```bash
+exit
+```
+
+#### 3. Si le front-end ne s'est pas lancé automatiquement, lancer-le manuellement :
+
+```bash
+docker compose up -d frontend
+```
 
 ---
 
-## 📦 Stack Highlights
+Une fois ces étapes terminées, l'application est disponible sur :
 
-- **Backend**: NestJS, GraphQL (Code First), Prisma ORM, JWT & CSRF security, Docker
-- **Frontend**: React, TypeScript, TailwindCSS, ShadCN UI, Apollo Client
-- **Security**: JWT in cookies, CSRF protection, Helmet, CORS setup
+```
+http://localhost
+```
 
 ---
 
-## 📘 Additional Notes
-
-- Each part of the application (backend/frontend) has its own detailed README for step-by-step instructions.
-- Tokens are handled securely using cookies and localStorage (depending on the environment).
-- Prisma is used for DB modeling, and GraphQL Code Generator ensures full type safety across frontend and backend.
-
-Enjoy sharing your recipes and cooking on **Eatstagram**!
