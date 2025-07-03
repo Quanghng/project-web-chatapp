@@ -27,9 +27,22 @@ ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_GRAPHQL_HTTP_URL=$VITE_GRAPHQL_HTTP_URL
 ENV VITE_GRAPHQL_HTTP_URL=$VITE_GRAPHQL_HTTP_URL
 
+# --- ADD THIS EXTREME DEBUGGING ---
+RUN echo "--- DEBUGGING ENV BEFORE VITE BUILD ---" && \
+    env | grep VITE_ && \
+    echo "VITE_GRAPHQL_HTTP_URL from ENV: $VITE_GRAPHQL_HTTP_URL" && \
+    echo "--- END DEBUGGING ENV ---"
+# --- END EXTREME DEBUGGING ---
+
 # Build the React application for production
 # This command depends on your package.json scripts, commonly 'build'
 RUN npm run build
+# --- ADD THIS EXTREME DEBUGGING AFTER BUILD ---
+# This will try to run a node script to check env vars,
+# and then print a specific string if it worked
+RUN node -e "console.log('VITE_GRAPHQL_HTTP_URL from Node env AFTER BUILD:', process.env.VITE_GRAPHQL_HTTP_URL);"
+RUN node -e "console.log('VITE_API_BASE_URL from Node env AFTER BUILD:', process.env.VITE_API_BASE_URL);"
+# --- END EXTREME DEBUGGING AFTER BUILD ---
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:alpine
