@@ -13,7 +13,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 function App() {
-  
+  const BUILD_IDENTIFIER = "pls work";
+  console.log('BUILD_IDENTIFIER:', BUILD_IDENTIFIER);
+
   useEffect(() => {
     const dark = localStorage.getItem("darkMode") === "true";
     if (dark) {
