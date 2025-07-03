@@ -131,9 +131,10 @@ services:
         condition: service_healthy 
     restart: unless-stopped
     environment:
-      - VITE_API_BASE_URL=http://localhost:3333 
-      - VITE_GRAPHQL_HTTP_URL=http://localhost:3333/graphql
-      - VITE_GRAPHQL_WS_URL=ws://localhost:3333/graphql
+      - VITE_API_BASE_URL=http://efrei-chatapp.duckdns.org:3333
+      - VITE_GRAPHQL_HTTP_URL=http://efrei-chatapp.duckdns.org:3333/graphql
+      - VITE_GRAPHQL_WS_URL=ws://efrei-chatapp.duckdns.org:3333/graphql 
+      - FRONTEND_URL_PUBLIC=http://efrei-chatapp.duckdns.org # This is the public URL the frontend is served from
 
 # ----------------------------------------------------
 # SHARED CONFIGURATIONS

@@ -10,6 +10,10 @@ async function bootstrap() {
 
   const allowedOrigins = [
     'http://localhost:5174',   // For development
+    'http://localhost:80', // For local development or if running frontend locally
+    'http://localhost',    // Another common local dev port
+    'http://localhost:3000', // React dev server default
+    'http://efrei-chatapp.duckdns.org',
     process.env.FRONTEND_URL,
   ]
   // Enable CORS 
