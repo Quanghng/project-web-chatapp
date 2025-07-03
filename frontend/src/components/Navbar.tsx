@@ -65,6 +65,16 @@ const Navbar = () => {
           </NavLink>
           {isLoggedIn ? (
             <>
+              <NavLink
+                to="/users"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-600 dark:text-blue-400 font-semibold"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
+                }
+              >
+                Liste d'utilisateurs
+              </NavLink>
               <button
                 onClick={handleLogout}
                 className="text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition"

@@ -80,6 +80,7 @@ input SendMessageDto {
 }
 
 type Subscription {
+  userLoggedIn: User!
   userOnline: Boolean!
   messageSent(conversationId: Int!): Message!
 }

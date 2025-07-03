@@ -1,0 +1,8 @@
+subscription UserLoggedIn {
+  userLoggedIn {
+    id
+    email
+    firstName
+    lastName
+  }
+}

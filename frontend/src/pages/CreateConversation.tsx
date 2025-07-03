@@ -1,16 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import { useGetUsersQuery, useCreateConversationMutation } from "@/gql/generated";
+import { useGetUsersQuery, useCreateConversationMutation, useUserLoggedInSubscription } from "@/gql/generated";
 
 const CreateConversation = () => {
   const navigate = useNavigate();
   const { data, loading, error } = useGetUsersQuery();
+  const { data: subData } = useUserLoggedInSubscription();
   const [createConversation, { loading: creating }] = useCreateConversationMutation();
   const [name, setName] = useState("");
   const [selected, setSelected] = useState<number[]>([]);
   const userId = Number(localStorage.getItem("userId"));
+  const [users, setUsers] = useState(data?.users || []);
+
+  // Update local users list when query data changes (initial load)
+  useEffect(() => {
+    if (data?.users) {
+      setUsers(data.users);
+    }
+  }, [data]);
+
+  // Handle subscription updates - add new logged in user to list if not present
+  useEffect(() => {
+    if (subData?.userLoggedIn) {
+      const newUser = subData.userLoggedIn;
+      setUsers((prevUsers) => {
+        // Only add if user is not already in the list
+        if (!prevUsers.find(u => u.id === newUser.id)) {
+          return [...prevUsers, newUser];
+        }
+        return prevUsers;
+      });
+    }
+  }, [subData]);
 
   const handleToggle = (id: number) => {
     setSelected((prev) =>
@@ -21,7 +44,6 @@ const CreateConversation = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId || selected.length === 0) return;
-    // Ajoute toujours l'utilisateur courant
     const participantIds = Array.from(new Set([...selected, userId]));
     const res = await createConversation({
       variables: { inputs: { name, participantIds } },
@@ -53,7 +75,7 @@ const CreateConversation = () => {
               <p className="text-red-500">Erreur : {error.message}</p>
             ) : (
               <div className="max-h-48 overflow-y-auto space-y-2">
-                {data?.users.filter(u => u.id !== userId).map((user) => (
+                {users.filter(u => u.id !== userId).map((user) => (
                   <label key={user.id} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -75,4 +97,4 @@ const CreateConversation = () => {
   );
 };
 
-export default CreateConversation; 
+export default CreateConversation;

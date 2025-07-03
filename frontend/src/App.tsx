@@ -8,6 +8,7 @@ import ConversationsList from "./pages/ConversationsList";
 import CreateConversation from "./pages/CreateConversation";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
+import UsersList from "./pages/UsersList";
 
 function App() {
   useEffect(() => {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/users" element={<UsersList />} />
         <Route path="/conversation/:conversationId" element={<Conversation />} />
         <Route path="/conversations" element={<ConversationsList />} />
         <Route path="/conversations/new" element={<CreateConversation />} />

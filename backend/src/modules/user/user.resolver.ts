@@ -1,7 +1,10 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { UserService } from "./user.service";
 import { User } from "./models/user.model";
 import { ModifyUserDto } from "./dto/modify-user.dto";
+import { PubSub } from "graphql-subscriptions";
+
+export const pubSub = new PubSub();
 
 @Resolver(() => User)
 export class UserResolver {
@@ -24,5 +27,12 @@ export class UserResolver {
   @Query(() => [User])
   async users(): Promise<User[]> {
     return this.userService.findAll();
+  }
+
+  @Subscription(() => User, {
+    resolve: (payload) => payload.userLoggedIn, // payload format: { userLoggedIn: User }
+  })
+  userLoggedIn() {
+    return pubSub.asyncIterator('userLoggedIn');
   }
 }
