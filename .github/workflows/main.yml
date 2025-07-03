@@ -65,15 +65,15 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: false # Do not push yet, just build locally
-          tags: nestjs_local_test:latest # A temporary local tag
+          tags: nestjs:latest 
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Start dependent services for Backend Tests
         run: |
           POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
           POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
-          REQUIRED_SERVICES="postgres redis rabbitmq"
+          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq nestjs 
+          REQUIRED_SERVICES="postgres redis rabbitmq nestjs"
           MAX_WAIT_SECONDS=300
           SLEEP_INTERVAL=10
           echo "Waiting for services to be healthy..."
@@ -117,6 +117,8 @@ jobs:
           docker compose -f docker-compose.yaml logs redis
           echo "--- RabbitMQ Logs ---"
           docker compose -f docker-compose.yaml logs rabbitmq
+          echo "--- NestJS Logs ---" 
+          docker compose -f docker-compose.yml logs nestjs
           echo "--- Docker Compose PS (all containers) ---"
           docker compose -f docker-compose.yaml ps -a
       - name: Install backend dependencies
