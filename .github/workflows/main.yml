@@ -20,54 +20,30 @@ jobs:
         uses: actions/checkout@v4
       - name: Set lowercase repository owner
         id: set_lowercase_owner
-        run: >
-          # Get the repository owner and convert it to lowercase using 'tr'
-
+        run: |
           LOWERCASE_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-
-          # Make the lowercase owner available as an environment variable for subsequent steps
-
           echo "LOWERCASE_OWNER=$LOWERCASE_OWNER" >> $GITHUB_ENV
       - name: Create dummy .env for Docker Compose in CI
-        run: >
+        run: |
           echo "REDIS_HOST=redis" > ./.env
-
           echo "REDIS_PORT=6379" >> ./.env
-
           echo "POSTGRES_HOST=postgres" >> ./.env
-
           echo "POSTGRES_PORT=5432" >> ./.env
-
           echo "RABBITMQ_HOST=rabbitmq" >> ./.env
-
           echo "RABBITMQ_PORT=5672" >> ./.env
-
           echo "POSTGRES_USER=testuser" >> ./.env
-
           echo "POSTGRES_PASSWORD=testpassword" >> ./.env
-
           echo "RABBITMQ_USER=testuser" >> ./.env
-
           echo "RABBITMQ_PASSWORD=testpassword" >> ./.env
-
           echo "JWT_ACCESS_TOKEN_SECRET=dummy_jwt_access" >> ./.env
-
           echo "JWT_REFRESH_TOKEN_SECRET=dummy_jwt_refresh" >> ./.env
-
           echo "CSRF_SECRET=dummy_csrf_secret" >> ./.env
-
           echo "CSRF_COOKIE_NAME=dummy_csrf_cookie" >> ./.env
-
           echo "TOKEN_COOKIE_MODE=dummy_token_mode" >> ./.env
-
           echo "NODE_ENV=development" >> ./.env
-
           echo "FRONTEND_URL=http://localhost" >> ./.env
-
           echo "FRONTEND_DOMAIN=localhost" >> ./.env
-
           echo "DATABASE_URL=postgresql://testuser:testpassword@postgres:5432/chatapp?schema=public" >> ./.env
-
           echo "RABBITMQ_URL=amqp://testuser:testpassword@rabbitmq:5672" >> ./.env
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -82,58 +58,42 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Start dependent services for Backend Tests
-        run: >
+        run: |
           POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-
           POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-
           docker compose -f docker-compose.yml up -d postgres redis rabbitmq
-
-
           REQUIRED_SERVICES="postgres redis rabbitmq"
-
           MAX_WAIT_SECONDS=300
-
           SLEEP_INTERVAL=10
-
-
           echo "Waiting for services to be healthy..."
-
           start_time=$(date +%s)
-
           while true; do
             current_time=$(date +%s)
             elapsed=$((current_time - start_time))
-
             if [ "$elapsed" -ge "$MAX_WAIT_SECONDS" ]; then
               echo "Timeout: Services did not become healthy within $MAX_WAIT_SECONDS seconds."
               docker compose -f docker-compose.yml ps -a
               exit 1
             fi
-
             all_healthy=true
             for service in $REQUIRED_SERVICES; do
               status=$(docker inspect -f '{{.State.Status}}' "$service" 2>/dev/null || true)
               health_status=$(docker inspect -f '{{.State.Health.Status}}' "$service" 2>/dev/null || true)
-
               if [ "$status" != "running" ]; then
                 echo "Service $service is not running (status: $status)..."
                 all_healthy=false
                 break
               fi
-
               if [ "$health_status" != "healthy" ]; then
                 echo "Service $service is running, but not yet healthy (health: $health_status)..."
                 all_healthy=false
                 break
               fi
             done
-
             if [ "$all_healthy" = true ]; then
               echo "All required services are healthy!"
               break
             fi
-
             sleep "$SLEEP_INTERVAL"
           done
         if: always()
@@ -155,8 +115,7 @@ jobs:
         run: npx prisma migrate deploy
         working-directory: ./backend
         env:
-          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{
-            secrets.POSTGRES_PASSWORD }}@localhost:5432/chatapp?schema=public
+          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/chatapp?schema=public
       - name: Run backend tests
         run: npm test
         working-directory: ./backend
@@ -167,10 +126,8 @@ jobs:
           POSTGRES_PORT: 5432
           RABBITMQ_HOST: localhost
           RABBITMQ_PORT: 5672
-          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{
-            secrets.POSTGRES_PASSWORD }}@localhost:5432/chatapp?schema=public
-          RABBITMQ_URL: amqp://${{ secrets.RABBITMQ_USER }}:${{ secrets.RABBITMQ_PASSWORD
-            }}@localhost:5672
+          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/chatapp?schema=public
+          RABBITMQ_URL: amqp://${{ secrets.RABBITMQ_USER }}:${{ secrets.RABBITMQ_PASSWORD }}@localhost:5672
           JWT_ACCESS_TOKEN_SECRET: ${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
           JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
           CSRF_SECRET: ${{ secrets.CSRF_SECRET }}
@@ -183,8 +140,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{
-            github.sha }}
+          tags: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Install frontend dependencies
@@ -199,13 +155,10 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{
-            github.sha }}
-          build-args: >
+          tags: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
+          build-args: |
             VITE_API_BASE_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}
-
             VITE_GRAPHQL_HTTP_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
-
             VITE_GRAPHQL_WS_URL=${{ secrets.FRONTEND_API_BASE_URL_PROD | replace('http', 'ws') }}/graphql
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -220,10 +173,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Set lowercase repository owner for deployment
         id: set_lowercase_owner_cd
-        run: >
-          LOWERCASE_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]'
-          '[:lower:]')
-
+        run: |
+          LOWERCASE_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "LOWERCASE_OWNER=$LOWERCASE_OWNER" >> $GITHUB_ENV
       - name: Deploy with SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -231,43 +182,22 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: >
+          script: |
             echo "Navigating to ${{ secrets.APP_DIR }}..."
-
             cd ${{ secrets.APP_DIR }} || { echo "Error: Application directory not found on server."; exit 1; }
-
-
             echo "Logging in to GitHub Container Registry..."
-
             echo ${{ secrets.DOCKER_PASSWORD }} | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin || { echo "Error logging into GHCR."; exit 1; }
-
-
             echo "Stopping and removing old containers..."
-
             docker compose down --volumes --remove-orphans
-
-
             echo "Pulling latest backend image: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}"
-
             docker pull ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling backend image."; exit 1; }
-
             docker tag ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} nestjs:latest
-
-
             echo "Pulling latest frontend image: ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}"
-
             docker pull ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} || { echo "Error pulling frontend image."; exit 1; }
-
             docker tag ghcr.io/${{ env.LOWERCASE_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} frontend:latest
-
-
             echo "Starting services using Docker Compose..."
-
             docker compose --env-file ./.env up -d --remove-orphans || { echo "Error starting services."; exit 1; }
-
-
             echo "Waiting for NestJS backend service to become healthy..."
-
             for i in {1..15}; do
               HEALTH_STATUS=$(docker inspect -f '{{.State.Health.Status}}' nestjs 2>/dev/null || true)
               if [ "$HEALTH_STATUS" == "healthy" ]; then
@@ -282,11 +212,6 @@ jobs:
                 exit 1
               fi
             done
-
-
             echo "Running Prisma Migrations on the deployed backend service..."
-
             docker compose exec nestjs npx prisma migrate deploy || { echo "Error running Prisma migrations."; exit 1; }
-
-
             echo "Deployment complete!"
