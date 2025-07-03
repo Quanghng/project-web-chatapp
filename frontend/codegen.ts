@@ -1,6 +1,7 @@
+/// <reference types="node" />
 import type { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
-  schema: 'http://localhost:3333/graphql',
+  schema: process.env.VITE_GRAPHQL_HTTP_URL,
   documents: 'src/**/*.graphql',
   generates: {
     // generate a single file with  hooks
