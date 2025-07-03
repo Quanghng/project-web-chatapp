@@ -157,6 +157,15 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
+      - name: Generate GraphQL types
+        run: npm run generate
+        working-directory: ./frontend
+        env:
+          # This provides the env vars for codegen.ts to connect to the LOCAL backend in CI
+          # The backend is running on localhost:3333 because of the docker compose setup earlier in CI
+          VITE_GRAPHQL_HTTP_URL: http://localhost:3333/graphql
+          # VITE_API_BASE_URL is not directly used by codegen.ts, but good to include if needed
+          VITE_API_BASE_URL: http://localhost:3333
       - name: Build frontend static files
         run: npm run build
         working-directory: ./frontend
