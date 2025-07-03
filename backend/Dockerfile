@@ -1,5 +1,5 @@
 # Use an official Node runtime as a parent image
-FROM node:20-alpine
+FROM node:18-alpine
 
 # Install bash and curl for wait-for-it.sh (if not already present and needed)
 RUN apk add --no-cache bash curl
