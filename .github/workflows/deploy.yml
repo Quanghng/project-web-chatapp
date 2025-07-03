@@ -47,4 +47,4 @@ jobs:
             # docker image prune -a -f # Removes all unused images. Be careful!
             # docker volume prune -f # Removes all unused volumes. Be careful!
 
-            echo "Deployment completed successfully on EC2!"
+            echo "Deployment completed successfully on EC2!!"
