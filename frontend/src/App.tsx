@@ -13,6 +13,16 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 function App() {
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const GRAPHQL_HTTP = import.meta.env.VITE_GRAPHQL_HTTP_URL;
+  const GRAPHQL_WS = import.meta.env.VITE_GRAPHQL_WS_URL;
+
+  console.log('--- FRONTEND DEBUG: ENV VARS ---');
+  console.log('VITE_API_BASE_URL:', API_BASE);
+  console.log('VITE_GRAPHQL_HTTP_URL:', GRAPHQL_HTTP);
+  console.log('VITE_GRAPHQL_WS_URL:', GRAPHQL_WS);
+  console.log('--- END FRONTEND DEBUG ---');
   
   useEffect(() => {
     const dark = localStorage.getItem("darkMode") === "true";
