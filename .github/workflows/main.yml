@@ -146,6 +146,12 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
+      - name: Generate GraphQL types
+        run: npm run generate
+        working-directory: ./frontend
+        env:
+          VITE_GRAPHQL_HTTP_URL: ${{ secrets.FRONTEND_API_BASE_URL_PROD }}/graphql
+          VITE_API_BASE_URL: ${{ secrets.FRONTEND_API_BASE_URL_PROD }}
       - name: Build frontend static files
         run: npm run build
         working-directory: ./frontend

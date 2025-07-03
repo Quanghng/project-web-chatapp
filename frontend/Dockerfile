@@ -5,6 +5,7 @@ FROM node:20-alpine AS builder
 # These will be set by docker-compose.yml using the 'args' build option
 ARG VITE_API_BASE_URL
 ARG VITE_GRAPHQL_HTTP_URL
+ARG VITE_GRAPHQL_HTTP_URL
 
 WORKDIR /app
 
@@ -23,6 +24,7 @@ COPY . .
 # Set environment variables for the build process
 # These are crucial for Vite to pick them up during 'npm run build'
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_GRAPHQL_HTTP_URL=$VITE_GRAPHQL_HTTP_URL
 ENV VITE_GRAPHQL_HTTP_URL=$VITE_GRAPHQL_HTTP_URL
 
 # Build the React application for production
