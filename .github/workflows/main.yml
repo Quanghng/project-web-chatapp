@@ -61,7 +61,7 @@ jobs:
         run: |
           POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
           POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-          docker compose -f docker-compose.yml up -d postgres redis rabbitmq
+          docker compose -f docker-compose.yaml up -d postgres redis rabbitmq
           REQUIRED_SERVICES="postgres redis rabbitmq"
           MAX_WAIT_SECONDS=300
           SLEEP_INTERVAL=10
@@ -72,7 +72,7 @@ jobs:
             elapsed=$((current_time - start_time))
             if [ "$elapsed" -ge "$MAX_WAIT_SECONDS" ]; then
               echo "Timeout: Services did not become healthy within $MAX_WAIT_SECONDS seconds."
-              docker compose -f docker-compose.yml ps -a
+              docker compose -f docker-compose.yaml ps -a
               exit 1
             fi
             all_healthy=true
@@ -101,13 +101,13 @@ jobs:
         run: |
           echo "--- Diagnostic Information for Failed Services ---"
           echo "--- Postgres Logs ---"
-          docker compose -f docker-compose.yml logs postgres
+          docker compose -f docker-compose.yaml logs postgres
           echo "--- Redis Logs ---"
-          docker compose -f docker-compose.yml logs redis
+          docker compose -f docker-compose.yaml logs redis
           echo "--- RabbitMQ Logs ---"
-          docker compose -f docker-compose.yml logs rabbitmq
+          docker compose -f docker-compose.yaml logs rabbitmq
           echo "--- Docker Compose PS (all containers) ---"
-          docker compose -f docker-compose.yml ps -a
+          docker compose -f docker-compose.yaml ps -a
       - name: Install backend dependencies
         run: npm install
         working-directory: ./backend
