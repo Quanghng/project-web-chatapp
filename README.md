@@ -91,8 +91,8 @@ Suivez ces étapes simples pour lancer l'application sur votre machine locale :
 
 1.  **Cloner le dépôt Git :**
     ```bash
-    git clone <URL_DE_VOTRE_DEPOT>
-    cd <NOM_DU_DOSSIER_DU_PROJET>
+    git clone https://github.com/Quanghng/project-web-chatapp
+    cd 
     ```
 
 2.  **Configurer les variables d'environnement :**
@@ -109,6 +109,11 @@ Suivez ces étapes simples pour lancer l'application sur votre machine locale :
     ```bash
     docker compose up -d --build
     ```
+
+    **Notes Importantes :**
+    *   Lors de la **première exécution** de cette commande avec l'option `--build`, la construction des images Docker peut prendre un certain temps (généralement entre 4 et 5 minutes, selon les performances de votre machine).
+    *   Il peut arriver que les vérifications de santé (health checks) de certains conteneurs échouent lors du démarrage initial, entraînant un redémarrage ou un statut `unhealthy`. Si c'est le cas, il suffit généralement de **relancer la commande** : `docker compose up -d`. Les services devraient alors démarrer correctement.
+  
     *Attendez quelques instants que tous les services démarrent et s'initialisent (notamment la base de données).*
 
 4.  **Accéder à l'application :**
