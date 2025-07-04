@@ -6,6 +6,24 @@ on:
       - main # Trigger this workflow whenever there's a push to the 'main' branch
 
 jobs:
+  # --- New Job: Test ---
+  test:
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 # Step to get your repository code onto the runner
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3 # Use v3 or v4 for newer Node versions if needed
+        with:
+          node-version: '18' # Specify the Node.js version your project uses (e.g., '14', '16', '18', '20')
+
+      - name: Install dependencies
+        run: npm ci # 'npm ci' is preferred for CI/CD as it's faster and uses package-lock.json strictly
+
+      - name: Run tests
+        run: npm run test
   deploy:
     runs-on: ubuntu-latest # The type of runner that the job will run on (GitHub-hosted runner)
 
