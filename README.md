@@ -189,7 +189,14 @@ npm run test
 ### Tests d'intégration et Tests de performance
 Tous les scripts de tests d’intégration et de tests de performance sont disponibles sur la branche staging.
 
-Pour exécuter les tests d’intégration, il suffit d’utiliser la commande principale qui lance également les tests unitaires:
+Les tests d'intégration nécessitent un accès réseau à RabbitMQ, qui est uniquement possible depuis le container nestjs.
+Pour exécuter les tests d’intégration, il faut entrer dans le container NestJS ::
+
+```bash
+docker compose exec nestjs sh
+```
+
+Puis lancez les tests à l'intérieur du container :
 
 ```bash
 npm run test
