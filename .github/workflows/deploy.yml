@@ -19,11 +19,15 @@ jobs:
         with:
           node-version: '18' # Specify the Node.js version your project uses (e.g., '14', '16', '18', '20')
 
-      - name: Install dependencies
-        run: npm ci # 'npm ci' is preferred for CI/CD as it's faster and uses package-lock.json strictly
+      - name: Navigate to backend and install dependencies
+        run: |
+          cd backend
+          npm ci # 'npm ci' is preferred for CI/CD as it's faster and uses package-lock.json strictly
 
-      - name: Run tests
-        run: npm run test
+      - name: Run backend tests
+        run: |
+          cd backend # Need to CD again if previous step ended, or ensure it's within the same run block.
+          npm run test
   deploy:
     runs-on: ubuntu-latest # The type of runner that the job will run on (GitHub-hosted runner)
 
