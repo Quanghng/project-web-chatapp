@@ -28,8 +28,6 @@ Ce projet s'appuie sur un ensemble de technologies modernes et performantes pour
     *   **Prisma** : ORM (Object-Relational Mapper) puissant pour la modélisation de la base de données et l'interaction sécurisée.
     *   **GraphQL Code Generator** : Assure une sûreté de type complète et automatique entre le frontend et le backend, réduisant les erreurs et améliorant la productivité.
 
-Compris ! Voici la mise à jour de la section "Tests" en ajoutant spécifiquement les tests d'intégration et de performance, sans réécrire le reste.
-
 ---
 
 ## ⚙️ Optimisations & Techniques Avancées
@@ -157,8 +155,6 @@ L'API GraphQL est structurée autour des entités suivantes :
 | `/signin`     | `POST`  | Connecte l'utilisateur et renvoie les tokens JWT + CSRF | Token CSRF               |
 | `/logout`     | `POST`  | Déconnecte l'utilisateur et invalide le token     | JWT d'accès              |
 | `/refresh`    | `POST`  | Rafraîchit les tokens de manière sécurisée        | JWT de rafraîchissement  |
-
-Absolument ! Voici la section "Tests" mise à jour avec les tests d'intégration et de performance :
 
 ---
 
