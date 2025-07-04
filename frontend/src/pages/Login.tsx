@@ -16,7 +16,7 @@ const Login = () => {
       await loginUser(email, password); 
       navigate("/");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Erreur de connexion");
     }
   };
   
@@ -28,7 +28,9 @@ const Login = () => {
         border border-gray-200 dark:border-gray-700 
         rounded-xl shadow-md mt-12 transition-colors">
 
-        <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">🔐 Login</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">
+          Connexion
+        </h1>
         <div className="space-y-4">
           <Input
             placeholder="Email"
@@ -38,7 +40,7 @@ const Login = () => {
           />
           <Input
             type="password"
-            placeholder="Password"
+            placeholder="Mot de passe"
             value={password}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -48,16 +50,16 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
           />
-          {error && <p className="text-red-500 text-sm">Login error: {error}</p>}
+          {error && <p className="text-red-500 text-sm">Erreur de connexion : {error}</p>}
           <Button
             onClick={handleLogin}
             className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
           >
-            Login
+            Se connecter
           </Button>
 
           <p className="text-sm text-center text-gray-600 dark:text-gray-300 mt-4">
-            Don't have an account? <Link to="/register" className="text-blue-600 hover:underline">Register here</Link>
+            Pas encore de compte ? <Link to="/register" className="text-blue-600 hover:underline">Inscris-toi ici</Link>
           </p>
         </div>
       </div>

@@ -21,7 +21,7 @@ const Register = () => {
         navigate("/login");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed");
+      setError(err.response?.data?.message || "Erreur d'inscription");
     }
   };
 
@@ -32,7 +32,9 @@ const Register = () => {
         text-gray-900 dark:text-gray-100 
         border border-gray-200 dark:border-gray-700 
         rounded-xl shadow-md mt-12 transition-colors">
-        <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">📝 Register</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">
+          Inscription
+        </h1>
         <div className="space-y-4">
           <Input
             placeholder="Email"
@@ -42,7 +44,7 @@ const Register = () => {
           />
           <Input
             type="password"
-            placeholder="Password"
+            placeholder="Mot de passe"
             value={password}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -52,12 +54,12 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
           />
-          {error && <p className="text-red-500 text-sm">Registration error: {error}</p>}
+          {error && <p className="text-red-500 text-sm">Erreur d'inscription : {error}</p>}
           <Button
             onClick={handleRegister}
             className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
           >
-            Register
+            S'inscrire
           </Button>
         </div>
       </div>

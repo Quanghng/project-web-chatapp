@@ -1,0 +1,17 @@
+config:
+  target: "ws://localhost:3333/graphql"
+  phases:
+    - duration: 30
+      arrivalRate: 3
+  plugins:
+    html: {}  
+scenarios:
+  - engine: "ws"
+    flow:
+      - send:
+          text: |
+            {"type":"connection_init","payload":{}}
+      - send:
+          text: |
+            {"id":"1","type":"start","payload":{"query":"subscription { onMessageSent(conversationId: 1) { id content } }"}}
+      - think: 5

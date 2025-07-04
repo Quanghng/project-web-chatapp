@@ -3,10 +3,8 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) to leverage Docker cache
-# This means npm install only re-runs if dependencies change
-COPY package.json ./
-# If you use yarn: COPY yarn.lock ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install

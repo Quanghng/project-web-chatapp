@@ -1,0 +1,24 @@
+config:
+  target: "http://localhost:3333/graphql"
+  phases:
+    - duration: 30        
+      arrivalRate: 10     
+  plugins:
+    html: {}            
+scenarios:
+  - name: Send Message Mutation
+    flow:
+      - post:
+          url: "/graphql"
+          json:
+            query: |
+              mutation SendMessage($content: String!, $userId: Int!, $conversationId: Int!) {
+                sendMessage(inputs: { content: $content, userId: $userId, conversationId: $conversationId }) {
+                  id
+                  content
+                }
+              }
+            variables:
+              content: "Performance test message"
+              userId: 1
+              conversationId: 1

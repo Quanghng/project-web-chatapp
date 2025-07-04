@@ -1,0 +1,50 @@
+name: Deploy Fullstack App to EC2
+
+on:
+  push:
+    branches:
+      - main # Trigger this workflow whenever there's a push to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # The type of runner that the job will run on (GitHub-hosted runner)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 # Step to get your repository code onto the runner
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master # This action allows you to run commands on a remote server via SSH
+        with:
+          host: ${{ secrets.EC2_HOST }}        # Your EC2 instance's public IP address or DNS name
+          username: ${{ secrets.EC2_USER }}    # The SSH username for your EC2 instance (e.g., 'ubuntu', 'ec2-user')
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # The private SSH key for authentication (stored as a GitHub Secret)
+          script: |
+            # --- SSH Commands to execute on your EC2 instance ---
+
+            # 1. Navigate to your application's directory
+            # This directory should contain your docker-compose.yml file and your source code.
+            cd /home/ubuntu/project-web-chatapp
+
+            # 2. Pull the latest code from your GitHub repository
+            # This ensures your docker-compose.yml and any Dockerfile changes are up-to-date
+            git pull origin main
+
+            # 3. Stop and remove existing Docker containers for your application
+            # --remove-orphans: Removes containers for services not defined in the compose file.
+            # This is robust for clean restarts and handles service name changes.
+            docker-compose down --remove-orphans || true # '|| true' allows the workflow to continue if no containers are running (first deploy)
+
+            # 4. Rebuild your Docker images with the latest code
+            # --no-cache: Ensures images are built from scratch, picking up the latest code changes.
+            docker-compose build --no-cache
+
+            # 5. Start your Docker containers in detached mode
+            docker-compose up -d
+
+            # Optional: Clean up old Docker images to free up disk space
+            # Use with caution if you have other Docker applications on the same EC2
+            # docker image prune -a -f # Removes all unused images. Be careful!
+            # docker volume prune -f # Removes all unused volumes. Be careful!
+
+            echo "Deployment completed successfully on EC2!!"
