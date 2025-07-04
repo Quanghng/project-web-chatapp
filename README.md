@@ -47,6 +47,44 @@ Compris ! Voici la mise à jour de la section "Tests" en ajoutant spécifiquemen
     *   **Helmet** : Protection contre les vulnérabilités web courantes en définissant des en-têtes HTTP sécurisés.
     *   Gestion sécurisée des **tokens d'accès (Access Token)** et des **tokens de rafraîchissement (Refresh Token)** pour l'authentification.
 
+## 📝 Variables d'Environnement
+
+Le projet utilise des variables d'environnement pour gérer les configurations sensibles et spécifiques à l'environnement. Un fichier `.env` est requis à la racine du projet. Vous pouvez copier le fichier `.env.example` et le remplir avec vos valeurs.
+
+Voici une explication de chaque variable :
+
+*   **`FRONTEND_URL`** : L'URL complète de votre application frontend. Essentiel pour la configuration CORS.
+*   **`FRONTEND_DOMAIN`** : Le nom de domaine de votre frontend. Utilisé pour la configuration des cookies et la sécurité.
+
+*   **`JWT_ACCESS_TOKEN_SECRET`** : Une chaîne secrète robuste utilisée pour signer les tokens d'accès JWT. **Générez une chaîne longue et aléatoire pour la production.**
+*   **`JWT_REFRESH_TOKEN_SECRET`** : Une chaîne secrète robuste utilisée pour signer les tokens de rafraîchissement JWT. **Générez une chaîne longue et aléatoire pour la production.**
+*   **`CSRF_SECRET`** : Une chaîne secrète robuste utilisée pour la protection CSRF. **Générez une chaîne longue et aléatoire pour la production.**
+*   **`CSRF_COOKIE_NAME`** : Le nom du cookie utilisé pour stocker le token CSRF. Il est recommandé de garder la valeur par défaut pour des raisons de sécurité (préfixe `__Host-`).
+
+*   **`TOKEN_COOKIE_MODE`** : Définit comment le token d'accès JWT est transmis.
+    *   `false` : Le token est attendu dans l'en-tête `Authorization: Bearer ...`.
+    *   `true` : Le token est attendu dans un cookie nommé `jwt`.
+
+*   **`NODE_ENV`** : L'environnement d'exécution de l'application Node.js (`development`, `production`, `test`). Affecte le comportement de log, la gestion des erreurs, et les optimisations.
+
+*   **`RABBITMQ_URL`** : L'URL de connexion complète à votre serveur RabbitMQ. Pour Docker Compose, utilisez le nom du service (ex: `amqp://admin:password@rabbitmq:5672`).
+*   **`RABBITMQ_USER`** : Nom d'utilisateur pour se connecter à RabbitMQ.
+*   **`RABBITMQ_PASSWORD`** : Mot de passe pour se connecter à RabbitMQ.
+*   **`RABBITMQ_HOST`** : L'hôte de RabbitMQ (utile pour des configurations séparées, sinon intégré à `RABBITMQ_URL`). Pour Docker Compose, utilisez `rabbitmq`.
+*   **`RABBITMQ_PORT`** : Le port de RabbitMQ.
+
+*   **`REDIS_HOST`** : L'hôte du serveur Redis (utilisé pour le caching, les sessions, ou les abonnements). Pour Docker Compose, utilisez `redis`.
+*   **`REDIS_PORT`** : Le port du serveur Redis.
+
+*   **`POSTGRES_USER`** : Nom d'utilisateur de la base de données PostgreSQL.
+*   **`POSTGRES_PASSWORD`** : Mot de passe de la base de données PostgreSQL.
+*   **`POSTGRES_DB`** : Nom de la base de données PostgreSQL à utiliser.
+*   **`DATABASE_URL`** : URL de connexion complète à la base de données PostgreSQL, utilisée notamment par Prisma. Pour Docker Compose, utilisez le nom du service (`postgres`) pour l'hôte.
+*   **`POSTGRES_HOST`** : L'hôte de la base de données PostgreSQL. Pour Docker Compose, utilisez `postgres`.
+*   **`POSTGRES_PORT`** : Le port de la base de données PostgreSQL.
+
+**Note importante :** Les secrets JWT et CSRF (et les mots de passe) doivent être des chaînes aléatoires **fortes et uniques** pour chaque environnement (développement, production). Ne les partagez jamais et ne les commettez jamais dans votre dépôt Git ! Utilisez un générateur de chaînes aléatoires pour les créer.
+
 ## 🚀 Comment Lancer le Projet
 
 Suivez ces étapes simples pour lancer l'application sur votre machine locale :
