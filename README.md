@@ -175,5 +175,26 @@ Pour lancer la suite de tests principale (unitaires, intégration, E2E), exécut
 npm run test
 ```
 
+### Tests d'intégration et Tests de performance
+Tous les scripts de tests d’intégration et de tests de performance sont disponibles sur la branche staging.
+
+Pour exécuter les tests d’intégration, il suffit d’utiliser la commande principale qui lance également les tests unitaires:
+
+```bash
+npm run test
+```
+
+Pour lancer les tests de performance, depuis le répertoire backend, utilisez ces commandes :
+
+```bash
+npx artillery run test/performance/artillery-sendMessage.yml --output test/performance/sendMessage-result.json
+```
+
+```bash
+npx artillery run test/performance/artillery-subscription.yml --output test/performance/subscription-result.json
+```
+
+Les résultats des tests de performance sont affichés directement dans le terminal pour une lecture rapide, et sauvegardés dans les fichiers JSON spécifiés (sendMessage-result.json et subscription-result.json) pour une analyse approfondie.
+
 
 ---
