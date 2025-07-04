@@ -85,6 +85,17 @@ Voici une explication de chaque variable :
 
 ## 🚀 Comment Lancer le Projet
 
+### Prérequis
+
+Avant de commencer, assurez-vous que les éléments suivants sont installés sur votre système :
+
+*   **Git** : Pour cloner le dépôt du projet.
+    *   [Télécharger Git](https://git-scm.com/downloads)
+*   **Docker** et **Docker Compose** : Pour construire et gérer les conteneurs de l'application.
+    *   [Installer Docker Desktop (inclut Docker Compose)](https://www.docker.com/products/docker-desktop/)
+
+### Étapes de Lancement
+
 Suivez ces étapes simples pour lancer l'application sur votre machine locale :
 
 1.  **Cloner le dépôt Git :**
